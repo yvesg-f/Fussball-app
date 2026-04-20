@@ -13,12 +13,18 @@ struct ContentView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Picker("Formation", selection: $store.formation) {
-                    ForEach(Formation.allCases, id: \.self) { f in
-                        Text(f.rawValue).tag(f)
+                HStack {
+                    Text("Formation")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Picker("Formation", selection: $store.formation) {
+                        ForEach(Formation.allCases, id: \.self) { f in
+                            Text(f.rawValue).tag(f)
+                        }
                     }
+                    .pickerStyle(.menu)
                 }
-                .pickerStyle(.segmented)
                 .padding(.horizontal)
 
                 PitchView(store: store, selectedSlot: $selectedSlot)
