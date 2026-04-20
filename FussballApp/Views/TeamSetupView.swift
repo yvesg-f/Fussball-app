@@ -41,7 +41,7 @@ struct TeamSetupView: View {
                 }
                 .onDelete { players.remove(atOffsets: $0) }
 
-                if players.count < 20 {
+                if players.count < 25 {
                     HStack {
                         TextField("Name hinzufügen…", text: $newPlayer)
                             .focused($newPlayerFocused)
@@ -52,7 +52,7 @@ struct TeamSetupView: View {
                 }
             } header: {
                 HStack {
-                    Text("Spieler (\(players.count)/20)")
+                    Text("Spieler (\(players.count)/25)")
                     Spacer()
                     if !players.isEmpty {
                         EditButton()
@@ -79,7 +79,7 @@ struct TeamSetupView: View {
 
     private func addPlayer() {
         let name = newPlayer.trimmingCharacters(in: .whitespaces)
-        guard !name.isEmpty, players.count < 20 else { return }
+        guard !name.isEmpty, players.count < 25 else { return }
         players.append(PlayerEntry(name: name))
         newPlayer = ""
         newPlayerFocused = true
