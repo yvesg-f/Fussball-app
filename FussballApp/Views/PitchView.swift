@@ -72,11 +72,7 @@ private struct SlotChipView: View {
             .position(chipPos)
             .onTapGesture {
                 guard draggingSlot == nil else { return }
-                if name != nil {
-                    store.remove(fromSlot: slot)
-                } else {
-                    pickerSlot = PickerSlot(id: slot)
-                }
+                pickerSlot = PickerSlot(id: slot)
             }
             .gesture(
                 LongPressGesture(minimumDuration: 0.35)
