@@ -1,12 +1,17 @@
 import SwiftUI
 
+private struct PlayerEntry: Identifiable {
+    var id = UUID()
+    var name: String
+}
+
 struct TeamSetupView: View {
     let teamId: Int
     let appStore: AppStore
     @Binding var path: [AppRoute]
 
     @State private var teamName: String
-    @State private var players: [String]
+    @State private var players: [PlayerEntry]
     @State private var newPlayer: String = ""
     @FocusState private var newPlayerFocused: Bool
 
@@ -21,7 +26,7 @@ struct TeamSetupView: View {
         self._path = path
         let existing = appStore.team(for: teamId)
         self._teamName = State(initialValue: existing?.name ?? "")
-        self._players = State(initialValue: existing?.playerNames ?? [])
+        self._players = State(initialValue: existing?.playerNames.map { PlayerEntry(name: $0) } ?? [])
     }
 
     var body: some View {
@@ -31,8 +36,8 @@ struct TeamSetupView: View {
             }
 
             Section {
-                ForEach(players.indices, id: \.self) { i in
-                    TextField("Spieler \(i + 1)", text: $players[i])
+                ForEach($players) { $player in
+                    TextField("Spielername", text: $player.name)
                 }
                 .onDelete { players.remove(atOffsets: $0) }
 
@@ -75,7 +80,7 @@ struct TeamSetupView: View {
     private func addPlayer() {
         let name = newPlayer.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty, players.count < 20 else { return }
-        players.append(name)
+        players.append(PlayerEntry(name: name))
         newPlayer = ""
         newPlayerFocused = true
     }
@@ -83,8 +88,7 @@ struct TeamSetupView: View {
     private func save() {
         var team = appStore.team(for: teamId) ?? Team(id: teamId, name: "")
         team.name = teamName.trimmingCharacters(in: .whitespaces)
-        team.playerNames = players.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
-        // Remove lineup entries whose players were deleted
+        team.playerNames = players.map { $0.name }.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
         let validNames = Set(team.playerNames)
         team.lineup = team.lineup.filter { validNames.contains($0.value) }
         let validSlots = Set(team.lineup.keys)

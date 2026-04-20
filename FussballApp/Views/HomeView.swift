@@ -15,7 +15,7 @@ struct HomeView: View {
             VStack(spacing: 0) {
                 // Header
                 VStack(spacing: 8) {
-                    Image(systemName: "soccerball.inverse")
+                    Image(systemName: "soccerball")
                         .font(.system(size: 64))
                         .foregroundStyle(.green)
                     Text("Aufstellung")
@@ -44,7 +44,7 @@ struct HomeView: View {
 
                 Spacer()
             }
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: AppRoute.self) { route in
                 switch route {
                 case .setup(let id):
@@ -85,8 +85,9 @@ private struct TeamSlotCard: View {
 
     var body: some View {
         if let team {
-            // Filled slot
-            Button(action: onOpen) {
+            // Filled slot — open area and action buttons are siblings, not nested
+            HStack(spacing: 14) {
+                // Tappable info area
                 HStack(spacing: 14) {
                     ZStack {
                         Circle()
@@ -96,7 +97,6 @@ private struct TeamSlotCard: View {
                             .font(.headline)
                             .foregroundStyle(.green)
                     }
-
                     VStack(alignment: .leading, spacing: 2) {
                         Text(team.name)
                             .font(.headline)
@@ -105,28 +105,32 @@ private struct TeamSlotCard: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
-
                     Spacer()
-
-                    Button(action: onEdit) {
-                        Image(systemName: "pencil")
-                            .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                    .padding(8)
-
-                    Button(action: onDelete) {
-                        Image(systemName: "trash")
-                            .foregroundStyle(.red)
-                    }
-                    .buttonStyle(.plain)
-                    .padding(8)
                 }
-                .padding()
-                .background(Color(.secondarySystemBackground),
-                            in: RoundedRectangle(cornerRadius: 14))
+                .contentShape(Rectangle())
+                .onTapGesture { onOpen() }
+
+                // Action buttons (separate from open area — no tap conflict)
+                Button(action: onEdit) {
+                    Image(systemName: "pencil")
+                        .foregroundStyle(.secondary)
+                        .padding(10)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+
+                Button(action: onDelete) {
+                    Image(systemName: "trash")
+                        .foregroundStyle(.red)
+                        .padding(10)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(Color(.secondarySystemBackground),
+                        in: RoundedRectangle(cornerRadius: 14))
 
         } else {
             // Empty slot
@@ -139,17 +143,15 @@ private struct TeamSlotCard: View {
                         Image(systemName: "plus")
                             .foregroundStyle(.tertiary)
                     }
-
                     Text("Neues Team")
                         .foregroundStyle(.secondary)
-
                     Spacer()
-
                     Text("Slot \(slot + 1)")
                         .font(.caption)
                         .foregroundStyle(.quaternary)
                 }
-                .padding()
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
                 .background(Color(.secondarySystemBackground),
                             in: RoundedRectangle(cornerRadius: 14))
             }
