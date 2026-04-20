@@ -50,7 +50,7 @@ private struct PositionRowView: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            ForEach(0..<row.count, id: \.self) { i in
+            ForEach(Array(0..<row.count), id: \.self) { i in
                 let slot = slotOffset + i
                 let name = store.playerName(forSlot: slot)
                 PlayerChip(name: name, isGoalkeeper: row.label == "TW")

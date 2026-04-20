@@ -9,11 +9,17 @@ struct PlayerPickerSheet: View {
         NavigationStack {
             Group {
                 if store.benchPlayers.isEmpty {
-                    ContentUnavailableView(
-                        "Keine Spieler verfügbar",
-                        systemImage: "person.slash",
-                        description: Text("Alle Spieler sind bereits eingeteilt.")
-                    )
+                    VStack(spacing: 12) {
+                        Image(systemName: "person.slash")
+                            .font(.system(size: 48))
+                            .foregroundStyle(.secondary)
+                        Text("Keine Spieler verfügbar")
+                            .font(.headline)
+                        Text("Alle Spieler sind bereits eingeteilt.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     List(store.benchPlayers, id: \.self) { name in
                         Button {
