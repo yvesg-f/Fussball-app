@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 import Combine
 
 final class LineupStore: ObservableObject {
@@ -92,7 +93,13 @@ final class LineupStore: ObservableObject {
         let f = UserDefaults.standard.string(forKey: "k_formation")
             .flatMap { Formation(rawValue: $0) } ?? .f442
         let l = (UserDefaults.standard.dictionary(forKey: "k_lineup") as? [String: String]) ?? [:]
-        let p = (UserDefaults.standard.dictionary(forKey: "k_positions") as? [String: [Double]]) ?? [:]
+        let p: [String: [Double]]
+        if let data = UserDefaults.standard.data(forKey: "k_positions"),
+           let decoded = try? JSONDecoder().decode([String: [Double]].self, from: data) {
+            p = decoded
+        } else {
+            p = [:]
+        }
         formation = f
         lineup = l
         slotPositions = p
@@ -101,6 +108,8 @@ final class LineupStore: ObservableObject {
     private func save() {
         UserDefaults.standard.set(formation.rawValue, forKey: "k_formation")
         UserDefaults.standard.set(lineup, forKey: "k_lineup")
-        UserDefaults.standard.set(slotPositions, forKey: "k_positions")
+        if let data = try? JSONEncoder().encode(slotPositions) {
+            UserDefaults.standard.set(data, forKey: "k_positions")
+        }
     }
 }

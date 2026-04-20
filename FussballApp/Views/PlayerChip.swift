@@ -8,7 +8,6 @@ struct PlayerChip: View {
         ZStack {
             RoundedRectangle(cornerRadius: 8)
                 .fill(chipColor)
-                .frame(height: 50)
                 .shadow(color: .black.opacity(0.22), radius: 2, y: 1)
 
             if let name = name {
@@ -25,6 +24,7 @@ struct PlayerChip: View {
                     .font(.system(size: 16, weight: .light))
             }
         }
+        .frame(width: 68, height: 50)
     }
 
     private var chipColor: Color {
