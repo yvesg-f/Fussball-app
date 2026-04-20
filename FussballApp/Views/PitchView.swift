@@ -1,17 +1,16 @@
 import SwiftUI
 import UIKit
 
-private struct PickerSlot: Identifiable { let id: Int }
-
 struct PitchView: View {
     @ObservedObject var store: LineupStore
-    @State private var pickerSlot: PickerSlot?
+    @Binding var selectedSlot: Int?
+
+    @State private var pickerSlot: Int? = nil
     @State private var draggingSlot: Int? = nil
     @State private var dragStartPos: CGPoint = .zero
 
     var body: some View {
         ZStack {
-            // Pitch background
             RoundedRectangle(cornerRadius: 14)
                 .fill(Color(red: 0.17, green: 0.54, blue: 0.20))
                 .overlay(PitchLines().clipShape(RoundedRectangle(cornerRadius: 14)))
@@ -27,36 +26,46 @@ struct PitchView: View {
                             slot: slot,
                             store: store,
                             pitchSize: CGSize(width: pw, height: ph),
+                            selectedSlot: $selectedSlot,
+                            pickerSlot: $pickerSlot,
                             draggingSlot: $draggingSlot,
-                            dragStartPos: $dragStartPos,
-                            pickerSlot: $pickerSlot
+                            dragStartPos: $dragStartPos
                         )
                     }
                 }
                 .coordinateSpace(name: "pitch")
+                // Tap on pitch background clears selection
+                .onTapGesture { selectedSlot = nil }
             }
             .clipShape(RoundedRectangle(cornerRadius: 14))
         }
         .frame(height: 440)
         .padding(.horizontal)
-        .sheet(item: $pickerSlot) { slot in
-            PlayerPickerSheet(store: store, slot: slot.id)
+        .sheet(item: Binding(
+            get: { pickerSlot.map { PickerID(id: $0) } },
+            set: { pickerSlot = $0?.id }
+        )) { p in
+            EmptySlotPickerSheet(store: store, slot: p.id)
         }
     }
 }
 
-// MARK: - Per-slot chip with gesture
+private struct PickerID: Identifiable { let id: Int }
+
+// MARK: - Per-slot chip
 
 private struct SlotChipView: View {
     let slot: Int
     @ObservedObject var store: LineupStore
     let pitchSize: CGSize
+    @Binding var selectedSlot: Int?
+    @Binding var pickerSlot: Int?
     @Binding var draggingSlot: Int?
     @Binding var dragStartPos: CGPoint
-    @Binding var pickerSlot: PickerSlot?
 
     private var name: String? { store.playerName(forSlot: slot) }
     private var isGK: Bool { store.isGoalkeeper(slot: slot) }
+    private var isSelected: Bool { selectedSlot == slot }
     private var isDraggingMe: Bool { draggingSlot == slot }
 
     private var chipPos: CGPoint {
@@ -66,13 +75,26 @@ private struct SlotChipView: View {
 
     var body: some View {
         PlayerChip(name: name, isGoalkeeper: isGK)
-            .scaleEffect(isDraggingMe ? 1.18 : 1.0)
-            .shadow(color: isDraggingMe ? .black.opacity(0.45) : .clear, radius: 10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(isSelected ? Color.cyan : .clear, lineWidth: 3)
+            )
+            .scaleEffect(isDraggingMe ? 1.18 : (isSelected ? 1.08 : 1.0))
+            .shadow(color: isDraggingMe ? .black.opacity(0.45) : (isSelected ? .cyan.opacity(0.5) : .clear), radius: 10)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isSelected)
             .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isDraggingMe)
             .position(chipPos)
             .onTapGesture {
                 guard draggingSlot == nil else { return }
-                pickerSlot = PickerSlot(id: slot)
+                if name != nil {
+                    // Toggle selection
+                    selectedSlot = isSelected ? nil : slot
+                } else {
+                    // Empty slot: open picker (only when nothing selected)
+                    if selectedSlot == nil {
+                        pickerSlot = slot
+                    }
+                }
             }
             .gesture(
                 LongPressGesture(minimumDuration: 0.35)
@@ -82,6 +104,7 @@ private struct SlotChipView: View {
                         guard name != nil else { return }
                         switch value {
                         case .first(true):
+                            selectedSlot = nil
                             draggingSlot = slot
                             dragStartPos = store.position(for: slot)
                             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -96,9 +119,49 @@ private struct SlotChipView: View {
                         default: break
                         }
                     }
-                    .onEnded { _ in
-                        draggingSlot = nil
-                    }
+                    .onEnded { _ in draggingSlot = nil }
             )
+    }
+}
+
+// MARK: - Sheet for assigning a player to an empty slot
+
+private struct EmptySlotPickerSheet: View {
+    @ObservedObject var store: LineupStore
+    let slot: Int
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if store.benchPlayers.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "person.slash")
+                            .font(.system(size: 48))
+                            .foregroundStyle(.secondary)
+                        Text("Keine Spieler auf der Bank")
+                            .font(.headline)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    List(store.benchPlayers, id: \.self) { name in
+                        Button {
+                            store.assign(name: name, toSlot: slot)
+                            dismiss()
+                        } label: {
+                            Label(name, systemImage: "person.fill")
+                                .foregroundStyle(Color.primary)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Spieler wählen")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Abbrechen") { dismiss() }
+                }
+            }
+        }
     }
 }

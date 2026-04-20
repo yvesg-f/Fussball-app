@@ -14,7 +14,6 @@
 		CC000000000000000000000005 /* PitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000005 /* PitchView.swift */; };
 		CC000000000000000000000006 /* PitchLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000006 /* PitchLines.swift */; };
 		CC000000000000000000000007 /* PlayerChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000007 /* PlayerChip.swift */; };
-		CC000000000000000000000008 /* PlayerPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000008 /* PlayerPickerSheet.swift */; };
 		CC000000000000000000000009 /* BenchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000009 /* BenchView.swift */; };
 		CC000000000000000000000010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000010 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -27,7 +26,6 @@
 		BB000000000000000000000005 /* PitchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchView.swift; sourceTree = "<group>"; };
 		BB000000000000000000000006 /* PitchLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchLines.swift; sourceTree = "<group>"; };
 		BB000000000000000000000007 /* PlayerChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerChip.swift; sourceTree = "<group>"; };
-		BB000000000000000000000008 /* PlayerPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerPickerSheet.swift; sourceTree = "<group>"; };
 		BB000000000000000000000009 /* BenchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchView.swift; sourceTree = "<group>"; };
 		BB000000000000000000000010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BB000000000000000000000011 /* FussballApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FussballApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,8 +83,7 @@
 				BB000000000000000000000005 /* PitchView.swift */,
 				BB000000000000000000000006 /* PitchLines.swift */,
 				BB000000000000000000000007 /* PlayerChip.swift */,
-				BB000000000000000000000008 /* PlayerPickerSheet.swift */,
-				BB000000000000000000000009 /* BenchView.swift */,
+					BB000000000000000000000009 /* BenchView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -156,8 +153,7 @@
 				CC000000000000000000000005 /* PitchView.swift in Sources */,
 				CC000000000000000000000006 /* PitchLines.swift in Sources */,
 				CC000000000000000000000007 /* PlayerChip.swift in Sources */,
-				CC000000000000000000000008 /* PlayerPickerSheet.swift in Sources */,
-				CC000000000000000000000009 /* BenchView.swift in Sources */,
+					CC000000000000000000000009 /* BenchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
