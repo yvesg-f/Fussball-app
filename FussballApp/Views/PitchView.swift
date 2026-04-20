@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 struct PitchView: View {
     @ObservedObject var store: LineupStore
@@ -97,27 +96,20 @@ private struct SlotChipView: View {
                 }
             }
             .gesture(
-                LongPressGesture(minimumDuration: 0.35)
-                    .sequenced(before: DragGesture(minimumDistance: 0,
-                                                   coordinateSpace: .named("pitch")))
-                    .onChanged { value in
+                DragGesture(minimumDistance: 6, coordinateSpace: .named("pitch"))
+                    .onChanged { drag in
                         guard name != nil else { return }
-                        switch value {
-                        case .first(true):
-                            selectedSlot = nil
+                        if draggingSlot != slot {
                             draggingSlot = slot
                             dragStartPos = store.position(for: slot)
-                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                        case .second(true, let drag?):
-                            guard draggingSlot == slot else { return }
-                            let newX = (dragStartPos.x * pitchSize.width + drag.translation.width) / pitchSize.width
-                            let newY = (dragStartPos.y * pitchSize.height + drag.translation.height) / pitchSize.height
-                            store.setPosition(for: slot, point: CGPoint(
-                                x: max(0.04, min(0.96, newX)),
-                                y: max(0.04, min(0.96, newY))
-                            ))
-                        default: break
+                            selectedSlot = nil
                         }
+                        let newX = (dragStartPos.x * pitchSize.width + drag.translation.width) / pitchSize.width
+                        let newY = (dragStartPos.y * pitchSize.height + drag.translation.height) / pitchSize.height
+                        store.setPosition(for: slot, point: CGPoint(
+                            x: max(0.04, min(0.96, newX)),
+                            y: max(0.04, min(0.96, newY))
+                        ))
                     }
                     .onEnded { _ in draggingSlot = nil }
             )
