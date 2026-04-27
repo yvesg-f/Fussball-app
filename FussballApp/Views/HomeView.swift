@@ -14,21 +14,21 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             VStack(spacing: 0) {
                 // Header
-                VStack(spacing: 8) {
+                VStack(spacing: 6) {
                     Image(systemName: "soccerball")
-                        .font(.system(size: 64))
+                        .font(.system(size: 48))
                         .foregroundStyle(.green)
                     Text("Aufstellung")
-                        .font(.largeTitle.bold())
+                        .font(.title.bold())
                     Text("Wähle ein Team")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
-                .padding(.top, 48)
-                .padding(.bottom, 36)
+                .padding(.top, 24)
+                .padding(.bottom, 20)
 
                 // 5 team slots
-                VStack(spacing: 12) {
+                VStack(spacing: 10) {
                     ForEach(0..<AppStore.maxTeams, id: \.self) { slot in
                         TeamSlotCard(
                             slot: slot,
