@@ -13,6 +13,8 @@ struct BenchView: View {
 
             // --- Selection action bar ---
             if let name = selectedName, let slot = selectedSlot {
+                let isCaptain = store.captainName == name
+
                 VStack(spacing: 10) {
                     HStack {
                         Image(systemName: "person.fill.checkmark")
@@ -30,15 +32,29 @@ struct BenchView: View {
                     }
                     .padding(.horizontal)
 
-                    Button(role: .destructive) {
-                        store.remove(fromSlot: slot)
-                        selectedSlot = nil
-                    } label: {
-                        Label("Spieler entfernen", systemImage: "person.fill.xmark")
-                            .frame(maxWidth: .infinity)
+                    HStack(spacing: 10) {
+                        // Captain toggle
+                        Button {
+                            store.toggleCaptain(for: name)
+                        } label: {
+                            Label(isCaptain ? "Kein Kapitän" : "Kapitän",
+                                  systemImage: isCaptain ? "crown" : "crown.fill")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(isCaptain ? .secondary : .yellow)
+
+                        // Remove from pitch
+                        Button(role: .destructive) {
+                            store.remove(fromSlot: slot)
+                            selectedSlot = nil
+                        } label: {
+                            Label("Entfernen", systemImage: "person.fill.xmark")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.red)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.red)
                     .padding(.horizontal)
 
                     if !store.benchPlayers.isEmpty {

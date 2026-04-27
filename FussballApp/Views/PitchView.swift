@@ -3,6 +3,7 @@ import SwiftUI
 struct PitchView: View {
     @ObservedObject var store: LineupStore
     @Binding var selectedSlot: Int?
+    var activeZones: Set<PitchZone> = []
 
     @State private var pickerSlot: Int? = nil
     @State private var draggingSlot: Int? = nil
@@ -14,6 +15,23 @@ struct PitchView: View {
                 .fill(Color(red: 0.17, green: 0.54, blue: 0.20))
                 .overlay(PitchLines().clipShape(RoundedRectangle(cornerRadius: 14)))
                 .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(.white.opacity(0.25), lineWidth: 1))
+
+            // Zone overlays
+            if !activeZones.isEmpty {
+                GeometryReader { geo in
+                    ForEach(Array(activeZones), id: \.self) { zone in
+                        Rectangle()
+                            .fill(zone.color.opacity(0.18))
+                            .frame(width: geo.size.width * (zone.xEnd - zone.xStart),
+                                   height: geo.size.height)
+                            .position(
+                                x: geo.size.width * (zone.xStart + zone.xEnd) / 2,
+                                y: geo.size.height / 2
+                            )
+                    }
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+            }
 
             GeometryReader { geo in
                 let pw = geo.size.width
@@ -33,7 +51,6 @@ struct PitchView: View {
                     }
                 }
                 .coordinateSpace(name: "pitch")
-                // Tap on pitch background clears selection
                 .onTapGesture { selectedSlot = nil }
             }
             .clipShape(RoundedRectangle(cornerRadius: 14))
@@ -66,6 +83,10 @@ private struct SlotChipView: View {
     private var isGK: Bool { store.isGoalkeeper(slot: slot) }
     private var isSelected: Bool { selectedSlot == slot }
     private var isDraggingMe: Bool { draggingSlot == slot }
+    private var isCaptain: Bool {
+        guard let n = name else { return false }
+        return store.captainName == n
+    }
 
     private var chipPos: CGPoint {
         let rel = store.position(for: slot)
@@ -73,7 +94,7 @@ private struct SlotChipView: View {
     }
 
     var body: some View {
-        PlayerChip(name: name, isGoalkeeper: isGK)
+        PlayerChip(name: name, isGoalkeeper: isGK, isCaptain: isCaptain)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(isSelected ? Color.cyan : .clear, lineWidth: 3)
@@ -86,13 +107,9 @@ private struct SlotChipView: View {
             .onTapGesture {
                 guard draggingSlot == nil else { return }
                 if name != nil {
-                    // Toggle selection
                     selectedSlot = isSelected ? nil : slot
                 } else {
-                    // Empty slot: open picker (only when nothing selected)
-                    if selectedSlot == nil {
-                        pickerSlot = slot
-                    }
+                    if selectedSlot == nil { pickerSlot = slot }
                 }
             }
             .gesture(

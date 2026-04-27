@@ -90,9 +90,12 @@ struct TeamSetupView: View {
         team.name = teamName.trimmingCharacters(in: .whitespaces)
         team.playerNames = players.map { $0.name }.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
         let validNames = Set(team.playerNames)
-        team.lineup = team.lineup.filter { validNames.contains($0.value) }
-        let validSlots = Set(team.lineup.keys)
-        team.slotPositions = team.slotPositions.filter { validSlots.contains($0.key) }
+        for i in team.lineups.indices {
+            team.lineups[i].lineup = team.lineups[i].lineup.filter { validNames.contains($0.value) }
+            let validSlots = Set(team.lineups[i].lineup.keys)
+            team.lineups[i].slotPositions = team.lineups[i].slotPositions.filter { validSlots.contains($0.key) }
+        }
+        team.captainName = validNames.contains(team.captainName ?? "") ? team.captainName : nil
         appStore.save(team: team)
         path = [.lineup(teamId: teamId)]
     }
