@@ -170,6 +170,10 @@ private struct HalfPitchEditorView: View {
                                     }
                                 }
                                 .onEnded { drag in
+                                    if isDraggingBall {
+                                        isDraggingBall = false
+                                        return
+                                    }
                                     if isDrawMode {
                                         if currentArrowPoints.count > 1 {
                                             piece.arrows.append(DrawnArrow(
@@ -178,8 +182,6 @@ private struct HalfPitchEditorView: View {
                                             ))
                                         }
                                         currentArrowPoints = []
-                                    } else if isDraggingBall {
-                                        isDraggingBall = false
                                     } else if let player = pendingPlayer {
                                         piece.playerPositions[player] = [
                                             max(0.02, min(0.98, drag.startLocation.x / w)),
