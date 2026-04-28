@@ -20,6 +20,12 @@
 		CC000000000000000000000013 /* AppStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000013 /* AppStore.swift */; };
 		CC000000000000000000000014 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000014 /* HomeView.swift */; };
 		CC000000000000000000000015 /* TeamSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000015 /* TeamSetupView.swift */; };
+		CC000000000000000000000016 /* SetPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000016 /* SetPiece.swift */; };
+		CC000000000000000000000017 /* HalfPitchLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000017 /* HalfPitchLines.swift */; };
+		CC000000000000000000000018 /* PitchZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000018 /* PitchZone.swift */; };
+		CC000000000000000000000019 /* TacticNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000019 /* TacticNotesView.swift */; };
+		CC000000000000000000000020 /* SetPieceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000020 /* SetPieceListView.swift */; };
+		CC000000000000000000000021 /* SetPieceEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000021 /* SetPieceEditorView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +43,12 @@
 		BB000000000000000000000013 /* AppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStore.swift; sourceTree = "<group>"; };
 		BB000000000000000000000014 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		BB000000000000000000000015 /* TeamSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamSetupView.swift; sourceTree = "<group>"; };
+		BB000000000000000000000016 /* SetPiece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPiece.swift; sourceTree = "<group>"; };
+		BB000000000000000000000017 /* HalfPitchLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfPitchLines.swift; sourceTree = "<group>"; };
+		BB000000000000000000000018 /* PitchZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchZone.swift; sourceTree = "<group>"; };
+		BB000000000000000000000019 /* TacticNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TacticNotesView.swift; sourceTree = "<group>"; };
+		BB000000000000000000000020 /* SetPieceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPieceListView.swift; sourceTree = "<group>"; };
+		BB000000000000000000000021 /* SetPieceEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPieceEditorView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -82,6 +94,7 @@
 				BB000000000000000000000003 /* LineupStore.swift */,
 				BB000000000000000000000012 /* Team.swift */,
 				BB000000000000000000000013 /* AppStore.swift */,
+				BB000000000000000000000016 /* SetPiece.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -89,13 +102,18 @@
 		DD000000000000000000000005 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-			BB000000000000000000000014 /* HomeView.swift */,
+				BB000000000000000000000014 /* HomeView.swift */,
 				BB000000000000000000000015 /* TeamSetupView.swift */,
 				BB000000000000000000000004 /* ContentView.swift */,
 				BB000000000000000000000005 /* PitchView.swift */,
 				BB000000000000000000000006 /* PitchLines.swift */,
 				BB000000000000000000000007 /* PlayerChip.swift */,
-					BB000000000000000000000009 /* BenchView.swift */,
+				BB000000000000000000000009 /* BenchView.swift */,
+				BB000000000000000000000017 /* HalfPitchLines.swift */,
+				BB000000000000000000000018 /* PitchZone.swift */,
+				BB000000000000000000000019 /* TacticNotesView.swift */,
+				BB000000000000000000000020 /* SetPieceListView.swift */,
+				BB000000000000000000000021 /* SetPieceEditorView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -170,6 +188,12 @@
 				CC000000000000000000000013 /* AppStore.swift in Sources */,
 				CC000000000000000000000014 /* HomeView.swift in Sources */,
 				CC000000000000000000000015 /* TeamSetupView.swift in Sources */,
+				CC000000000000000000000016 /* SetPiece.swift in Sources */,
+				CC000000000000000000000017 /* HalfPitchLines.swift in Sources */,
+				CC000000000000000000000018 /* PitchZone.swift in Sources */,
+				CC000000000000000000000019 /* TacticNotesView.swift in Sources */,
+				CC000000000000000000000020 /* SetPieceListView.swift in Sources */,
+				CC000000000000000000000021 /* SetPieceEditorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
