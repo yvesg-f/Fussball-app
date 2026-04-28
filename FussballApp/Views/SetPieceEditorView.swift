@@ -246,43 +246,61 @@ private struct PlayerStripView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 ForEach(players, id: \.self) { name in
-                    let isPending = pendingPlayer == name
-                    let isPlaced  = placedPlayers.contains(name)
-                    Button {
+                    PlayerStripChip(
+                        name: name,
+                        isPending: pendingPlayer == name,
+                        isPlaced: placedPlayers.contains(name),
+                        isDrawMode: isDrawMode
+                    ) {
                         guard !isDrawMode else { return }
-                        pendingPlayer = isPending ? nil : name
-                    } label: {
-                        Text(name)
-                            .font(.system(size: 11, weight: .semibold))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.7)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 7)
-                            .background(
-                                isPending ? Color.cyan.opacity(0.3) :
-                                isPlaced  ? Color.green.opacity(0.15) :
-                                            Color(.tertiarySystemBackground),
-                                in: RoundedRectangle(cornerRadius: 8)
-                            )
-                            .foregroundStyle(
-                                isDrawMode ? .tertiary :
-                                isPending  ? .cyan :
-                                isPlaced   ? .green :
-                                             .primary
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(isPending ? Color.cyan : .clear, lineWidth: 1.5)
-                            )
+                        pendingPlayer = (pendingPlayer == name) ? nil : name
                     }
-                    .buttonStyle(.plain)
-                    .animation(.easeInOut(duration: 0.12), value: isPending)
                 }
             }
             .padding(.horizontal)
             .padding(.vertical, 10)
         }
         .background(Color(.secondarySystemBackground))
+    }
+}
+
+private struct PlayerStripChip: View {
+    let name: String
+    let isPending: Bool
+    let isPlaced: Bool
+    let isDrawMode: Bool
+    let onTap: () -> Void
+
+    private var bgColor: Color {
+        if isPending { return Color.cyan.opacity(0.3) }
+        if isPlaced  { return Color.green.opacity(0.15) }
+        return Color(.tertiarySystemBackground)
+    }
+
+    private var fgStyle: Color {
+        if isDrawMode { return Color.secondary }
+        if isPending  { return Color.cyan }
+        if isPlaced   { return Color.green }
+        return Color.primary
+    }
+
+    var body: some View {
+        Button(action: onTap) {
+            Text(name)
+                .font(.system(size: 11, weight: .semibold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 7)
+                .background(bgColor, in: RoundedRectangle(cornerRadius: 8))
+                .foregroundStyle(fgStyle)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(isPending ? Color.cyan : Color.clear, lineWidth: 1.5)
+                )
+        }
+        .buttonStyle(.plain)
+        .animation(.easeInOut(duration: 0.12), value: isPending)
     }
 }
 
