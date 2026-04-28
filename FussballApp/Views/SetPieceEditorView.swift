@@ -127,6 +127,8 @@ private struct HalfPitchEditorView: View {
     let isDrawMode: Bool
     let selectedArrowColor: ArrowColor
 
+    @State private var isDraggingBall = false
+
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 14)
@@ -139,7 +141,7 @@ private struct HalfPitchEditorView: View {
                 let h = geo.size.height
 
                 ZStack {
-                    // Background interaction layer
+                    // Single background gesture layer — handles drawing, ball drag, player placement
                     Color.clear
                         .contentShape(Rectangle())
                         .gesture(
@@ -149,6 +151,22 @@ private struct HalfPitchEditorView: View {
                                         currentArrowPoints.append(
                                             [drag.location.x / w, drag.location.y / h]
                                         )
+                                    } else if isDraggingBall {
+                                        piece.ballPosition = [
+                                            max(0.02, min(0.98, drag.location.x / w)),
+                                            max(0.02, min(0.98, drag.location.y / h))
+                                        ]
+                                    } else if piece.ballPosition.count == 2 {
+                                        // Detect if touch started near the ball (within 24pt)
+                                        let bx = piece.ballPosition[0] * w
+                                        let by = piece.ballPosition[1] * h
+                                        if hypot(drag.startLocation.x - bx, drag.startLocation.y - by) < 24 {
+                                            isDraggingBall = true
+                                            piece.ballPosition = [
+                                                max(0.02, min(0.98, drag.location.x / w)),
+                                                max(0.02, min(0.98, drag.location.y / h))
+                                            ]
+                                        }
                                     }
                                 }
                                 .onEnded { drag in
@@ -160,6 +178,8 @@ private struct HalfPitchEditorView: View {
                                             ))
                                         }
                                         currentArrowPoints = []
+                                    } else if isDraggingBall {
+                                        isDraggingBall = false
                                     } else if let player = pendingPlayer {
                                         piece.playerPositions[player] = [
                                             max(0.02, min(0.98, drag.startLocation.x / w)),
@@ -186,20 +206,10 @@ private struct HalfPitchEditorView: View {
                                     style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round))
                     }
 
-                    // Ball marker
+                    // Ball marker (no own gesture — handled by background layer above)
                     if piece.ballPosition.count == 2 {
                         BallMarker()
                             .position(x: piece.ballPosition[0] * w, y: piece.ballPosition[1] * h)
-                            .gesture(
-                                DragGesture(minimumDistance: 2)
-                                    .onChanged { drag in
-                                        guard !isDrawMode else { return }
-                                        piece.ballPosition = [
-                                            max(0.02, min(0.98, drag.location.x / w)),
-                                            max(0.02, min(0.98, drag.location.y / h))
-                                        ]
-                                    }
-                            )
                     }
 
                     // Placed player chips
@@ -218,7 +228,6 @@ private struct HalfPitchEditorView: View {
                                         }
                                         .onEnded { drag in
                                             guard !isDrawMode else { return }
-                                            // Tap (minimal movement) removes the chip
                                             let moved = hypot(drag.translation.width, drag.translation.height)
                                             if moved < 5 {
                                                 piece.playerPositions.removeValue(forKey: name)
