@@ -2,39 +2,53 @@ import Foundation
 import Combine
 
 final class AppStore: ObservableObject {
-    static let maxTeams = 5
-
-    @Published private(set) var teams: [Int: Team] = [:]
+    @Published private(set) var team: Team?
 
     init() { load() }
 
     func save(team: Team) {
-        teams[team.id] = team
+        self.team = team
         persist()
     }
 
-    func delete(id: Int) {
-        teams.removeValue(forKey: id)
+    func deleteTeam() {
+        team = nil
+        UserDefaults.standard.removeObject(forKey: "app_team_v2")
+    }
+
+    func addLineup(name: String) {
+        guard team != nil else { return }
+        team!.lineups.append(SavedLineup(name: name))
         persist()
     }
 
-    func team(for id: Int) -> Team? { teams[id] }
-
-    // MARK: - Persistence
+    func deleteLineup(at index: Int) {
+        guard var t = team, t.lineups.count > 1, index < t.lineups.count else { return }
+        t.lineups.remove(at: index)
+        if t.activeLineupIndex >= t.lineups.count {
+            t.activeLineupIndex = t.lineups.count - 1
+        }
+        team = t
+        persist()
+    }
 
     private func persist() {
-        let keyed = Dictionary(uniqueKeysWithValues: teams.map { (String($0.key), $0.value) })
-        if let data = try? JSONEncoder().encode(keyed) {
-            UserDefaults.standard.set(data, forKey: "app_teams")
-        }
+        guard let t = team, let data = try? JSONEncoder().encode(t) else { return }
+        UserDefaults.standard.set(data, forKey: "app_team_v2")
     }
 
     private func load() {
-        guard let data = UserDefaults.standard.data(forKey: "app_teams"),
-              let keyed = try? JSONDecoder().decode([String: Team].self, from: data)
-        else { return }
-        teams = Dictionary(uniqueKeysWithValues: keyed.compactMap { k, v in
-            Int(k).map { ($0, v) }
-        })
+        if let data = UserDefaults.standard.data(forKey: "app_team_v2"),
+           let t = try? JSONDecoder().decode(Team.self, from: data) {
+            team = t
+            return
+        }
+        // Migrate from old multi-team format (slot 0)
+        if let data = UserDefaults.standard.data(forKey: "app_teams"),
+           let keyed = try? JSONDecoder().decode([String: Team].self, from: data),
+           let t = keyed["0"] {
+            team = t
+            persist()
+        }
     }
 }

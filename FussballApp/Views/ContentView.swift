@@ -2,34 +2,21 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var store: LineupStore
-    private let teamName: String
+    private let lineupName: String
     @State private var selectedSlot: Int? = nil
     @State private var activeZones: Set<PitchZone> = []
     @State private var showNotes = false
     @State private var showSetPieces = false
 
-    init(team: Team, appStore: AppStore) {
-        self.teamName = team.name
-        _store = StateObject(wrappedValue: LineupStore(team: team, appStore: appStore))
+    init(team: Team, lineupIndex: Int, appStore: AppStore) {
+        let name = lineupIndex < team.lineups.count ? team.lineups[lineupIndex].name : "Aufstellung"
+        self.lineupName = name
+        _store = StateObject(wrappedValue: LineupStore(team: team, lineupIndex: lineupIndex, appStore: appStore))
     }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-
-                // Plan A / Plan B picker
-                Picker("Plan", selection: Binding(
-                    get: { store.activeLineupIndex },
-                    set: { store.switchLineup(to: $0) }
-                )) {
-                    ForEach(store.lineupNames.indices, id: \.self) { i in
-                        Text(store.lineupNames[i]).tag(i)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
-
-                // Formation picker
                 HStack {
                     Text("Formation")
                         .font(.subheadline)
@@ -46,27 +33,22 @@ struct ContentView: View {
 
                 PitchView(store: store, selectedSlot: $selectedSlot, activeZones: activeZones)
 
-                // Zone toggle bar
                 ZoneToggleBar(activeZones: $activeZones)
 
                 BenchView(store: store, selectedSlot: $selectedSlot)
             }
             .padding(.vertical)
         }
-        .navigationTitle(teamName)
+        .navigationTitle(lineupName)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: store.formation) { _ in selectedSlot = nil }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
-                    Button {
-                        showSetPieces = true
-                    } label: {
+                    Button { showSetPieces = true } label: {
                         Label("Standards", systemImage: "figure.soccer")
                     }
-                    Button {
-                        showNotes = true
-                    } label: {
+                    Button { showNotes = true } label: {
                         Label("Taktiknotizen", systemImage: "note.text")
                     }
                 } label: {

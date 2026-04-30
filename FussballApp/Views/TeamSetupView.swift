@@ -6,73 +6,74 @@ private struct PlayerEntry: Identifiable {
 }
 
 struct TeamSetupView: View {
-    let teamId: Int
     let appStore: AppStore
-    @Binding var path: [AppRoute]
+    @Environment(\.dismiss) private var dismiss
 
     @State private var teamName: String
     @State private var players: [PlayerEntry]
     @State private var newPlayer: String = ""
     @FocusState private var newPlayerFocused: Bool
 
-    private var isEditing: Bool { appStore.team(for: teamId) != nil }
     private var canSave: Bool {
         !teamName.trimmingCharacters(in: .whitespaces).isEmpty && !players.isEmpty
     }
 
-    init(teamId: Int, appStore: AppStore, path: Binding<[AppRoute]>) {
-        self.teamId = teamId
+    init(appStore: AppStore) {
         self.appStore = appStore
-        self._path = path
-        let existing = appStore.team(for: teamId)
+        let existing = appStore.team
         self._teamName = State(initialValue: existing?.name ?? "")
         self._players = State(initialValue: existing?.playerNames.map { PlayerEntry(name: $0) } ?? [])
     }
 
     var body: some View {
-        Form {
-            Section("Team Name") {
-                TextField("z.B. FC Zürich", text: $teamName)
-            }
-
-            Section {
-                ForEach($players) { $player in
-                    TextField("Spielername", text: $player.name)
+        NavigationStack {
+            Form {
+                Section("Team Name") {
+                    TextField("z.B. FC Mein Team", text: $teamName)
                 }
-                .onDelete { players.remove(atOffsets: $0) }
 
-                if players.count < 25 {
+                Section {
+                    ForEach($players) { $player in
+                        TextField("Spielername", text: $player.name)
+                    }
+                    .onDelete { players.remove(atOffsets: $0) }
+
+                    if players.count < 25 {
+                        HStack {
+                            TextField("Name hinzufügen…", text: $newPlayer)
+                                .focused($newPlayerFocused)
+                                .onSubmit { addPlayer() }
+                            Button("Hinzufügen") { addPlayer() }
+                                .disabled(newPlayer.trimmingCharacters(in: .whitespaces).isEmpty)
+                        }
+                    }
+                } header: {
                     HStack {
-                        TextField("Name hinzufügen…", text: $newPlayer)
-                            .focused($newPlayerFocused)
-                            .onSubmit { addPlayer() }
-                        Button("Hinzufügen") { addPlayer() }
-                            .disabled(newPlayer.trimmingCharacters(in: .whitespaces).isEmpty)
+                        Text("Spieler (\(players.count)/25)")
+                        Spacer()
+                        if !players.isEmpty {
+                            EditButton()
+                                .font(.caption)
+                        }
                     }
-                }
-            } header: {
-                HStack {
-                    Text("Spieler (\(players.count)/25)")
-                    Spacer()
-                    if !players.isEmpty {
-                        EditButton()
-                            .font(.caption)
+                } footer: {
+                    if players.isEmpty {
+                        Text("Mindestens 1 Spieler erforderlich.")
+                            .foregroundStyle(.red)
                     }
-                }
-            } footer: {
-                if players.isEmpty {
-                    Text("Mindestens 1 Spieler erforderlich.")
-                        .foregroundStyle(.red)
                 }
             }
-        }
-        .navigationTitle(isEditing ? "Team bearbeiten" : "Neues Team")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Speichern") { save() }
-                    .disabled(!canSave)
-                    .fontWeight(.semibold)
+            .navigationTitle(appStore.team == nil ? "Neues Team" : "Team bearbeiten")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Abbrechen") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Speichern") { save() }
+                        .disabled(!canSave)
+                        .fontWeight(.semibold)
+                }
             }
         }
     }
@@ -86,7 +87,7 @@ struct TeamSetupView: View {
     }
 
     private func save() {
-        var team = appStore.team(for: teamId) ?? Team(id: teamId, name: "")
+        var team = appStore.team ?? Team(id: 0, name: "")
         team.name = teamName.trimmingCharacters(in: .whitespaces)
         team.playerNames = players.map { $0.name }.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
         let validNames = Set(team.playerNames)
@@ -97,6 +98,6 @@ struct TeamSetupView: View {
         }
         team.captainName = validNames.contains(team.captainName ?? "") ? team.captainName : nil
         appStore.save(team: team)
-        path = [.lineup(teamId: teamId)]
+        dismiss()
     }
 }
