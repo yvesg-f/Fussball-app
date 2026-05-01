@@ -1,14 +1,42 @@
-# Fussball App
+# Aufstellung — Fussball Taktik App
 
-iOS-App zur Verwaltung einer Fussball-Aufstellung. Gebaut mit SwiftUI, keine externen Dependencies.
+Native iOS-App zur Verwaltung von Fussball-Aufstellungen für ein Team. Gebaut mit SwiftUI, keine externen Abhängigkeiten.
 
-## Features
+## Was die App kann
 
-- Formationen: 4-4-2 · 4-3-3 · 3-5-2 · 4-2-3-1
-- Grünes Spielfeld mit Positionen (TW, ABW, MIT, STU)
-- Spieler per Tap zuweisen oder entfernen
-- Bank zeigt nicht eingeteilte Spieler
-- Aufstellung wird gespeichert (UserDefaults)
+**Team & Spieler**
+- Ein Team mit bis zu 25 Spielern definieren
+- Spielernamen jederzeit bearbeiten oder löschen
+- Spieler bleiben über alle Aufstellungen gleich
+
+**Aufstellungen**
+- Beliebig viele benannte Aufstellungen erstellen (Plan A, Plan B, Plan C …)
+- Jede Aufstellung hat eigene Formation, Positionen und Spielerzuteilungen
+- Aufstellungen unabhängig voneinander bearbeiten und speichern
+
+**Spielfeld**
+- 8 Formationen: 4-4-2 · 4-3-3 · 3-5-2 · 4-2-3-1 · 5-3-2 · 4-1-4-1 · 3-4-3 · 4-5-1
+- Grünes Spielfeld mit Feldlinien
+- Spieler per Drag frei auf dem Feld positionieren
+- Spieler antippen → auswechseln oder von der Bank tauschen
+- Torwart-Chip in Gelb, Feldspieler in Weiss
+- Kapitän-Markierung (Krone)
+
+**Feldzonen**
+- 5 Feldzonen einblendbar: Links · Halbspur L · Zentrum · Halbspur R · Rechts
+
+**Standards**
+- Eckball links/rechts, Freistoß, Elfmeter, Einwurf
+- Spieler auf dem Halbfeld platzieren und verschieben
+- Ball-Position frei verschiebbar
+- Laufwege zeichnen (Lauf, Flanke, Block)
+- Angriff- und Verteidigung-Phase
+
+**Taktiknotizen**
+- Freitext-Notizen pro Team speichern
+
+**Allgemein**
+- Alles wird lokal gespeichert (UserDefaults, kein Account nötig)
 - Light & Dark Mode
 
 ---
@@ -76,19 +104,29 @@ Danach öffnet sich die App normal — und bleibt 7 Tage installiert (Free Accou
 ## Projektstruktur
 
 ```
-FussballApp.xcodeproj/   ← Xcode-Projekt
+FussballApp.xcodeproj/
 FussballApp/
   App/
-    FussballAppApp.swift     ← Einstiegspunkt
+    FussballAppApp.swift          ← Einstiegspunkt
   Models/
-    Formation.swift          ← Formationen & Positionen
-    LineupStore.swift        ← State + UserDefaults
+    Formation.swift               ← 8 Formationen mit Reihen-Definitionen
+    Team.swift                    ← Team & SavedLineup Datenmodell
+    AppStore.swift                ← Team-Persistenz (UserDefaults)
+    LineupStore.swift             ← Aufstellungs-State pro Lineup-Index
+    SetPiece.swift                ← Standards-Datenmodell
   Views/
-    ContentView.swift        ← Haupt-View
-    PitchView.swift          ← Spielfeld
-    PitchLines.swift         ← Feldlinien (Canvas)
-    PlayerChip.swift         ← Spieler-Chip
-    PlayerPickerSheet.swift  ← Spieler-Auswahl Sheet
-    BenchView.swift          ← Bank
+    HomeView.swift                ← Hauptmenü (Aufstellungs-Übersicht)
+    TeamSetupView.swift           ← Spieler hinzufügen / bearbeiten
+    ContentView.swift             ← Aufstellungs-View mit Formation & Bank
+    PitchView.swift               ← Spielfeld mit Drag & Drop
+    PitchLines.swift              ← Feldlinien (Canvas)
+    PitchZone.swift               ← Feldzonen-Definitionen
+    HalfPitchLines.swift          ← Halbfeld-Linien für Standards
+    PlayerChip.swift              ← Spieler-Chip
+    BenchView.swift               ← Bank mit Tausch-Panel
+    TacticNotesView.swift         ← Taktiknotizen
+    SetPieceListView.swift        ← Standards-Übersicht
+    SetPieceEditorView.swift      ← Standards-Editor mit Zeichnen
   Assets.xcassets/
+    AppIcon.appiconset/           ← App-Icon (1024×1024)
 ```
