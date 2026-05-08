@@ -33,7 +33,6 @@ struct BenchView: View {
                     .padding(.horizontal)
 
                     HStack(spacing: 10) {
-                        // Captain toggle
                         Button {
                             store.toggleCaptain(for: name)
                         } label: {
@@ -44,7 +43,6 @@ struct BenchView: View {
                         .buttonStyle(.bordered)
                         .tint(isCaptain ? .secondary : .yellow)
 
-                        // Remove from pitch
                         Button(role: .destructive) {
                             store.remove(fromSlot: slot)
                             selectedSlot = nil
@@ -64,32 +62,9 @@ struct BenchView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal)
 
-                        LazyVGrid(
-                            columns: [GridItem(.adaptive(minimum: 90), spacing: 8)],
-                            spacing: 8
-                        ) {
-                            ForEach(store.benchPlayers, id: \.self) { benchName in
-                                Button {
-                                    store.assign(name: benchName, toSlot: slot)
-                                    selectedSlot = nil
-                                } label: {
-                                    Text(benchName)
-                                        .font(.system(size: 12, weight: .medium))
-                                        .lineLimit(1)
-                                        .minimumScaleFactor(0.7)
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 8)
-                                        .frame(maxWidth: .infinity)
-                                        .background(.cyan.opacity(0.15),
-                                                    in: RoundedRectangle(cornerRadius: 8))
-                                        .foregroundStyle(.primary)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .strokeBorder(.cyan.opacity(0.4), lineWidth: 1)
-                                        )
-                                }
-                                .buttonStyle(.plain)
-                            }
+                        PlayerGrid(names: store.benchPlayers) { benchName in
+                            store.assign(name: benchName, toSlot: slot)
+                            selectedSlot = nil
                         }
                         .padding(.horizontal)
                     }
@@ -99,44 +74,129 @@ struct BenchView: View {
                 .padding(.horizontal)
 
             } else {
-                // --- Normal bench view ---
-                HStack {
-                    Text("Bank")
-                        .font(.headline)
-                    Spacer()
-                    Text("\(store.benchPlayers.count) Spieler")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                .padding(.horizontal)
+                // --- Bank ---
+                SectionHeader(
+                    title: "Bank",
+                    count: store.benchPlayers.count,
+                    emptyLabel: "Keine Bankspieler eingestellt"
+                )
 
-                if store.benchPlayers.isEmpty {
-                    Label("Alle Spieler eingeteilt", systemImage: "checkmark.circle.fill")
+                if !store.benchPlayers.isEmpty {
+                    TagGrid(names: store.benchPlayers, symbol: "minus.circle.fill", tint: .cyan) { name in
+                        store.removeFromBench(name)
+                    }
+                    .padding(.horizontal)
+                }
+
+                // --- Nicht dabei ---
+                SectionHeader(
+                    title: "Nicht dabei",
+                    count: store.unselectedPlayers.count,
+                    emptyLabel: nil
+                )
+
+                if store.unselectedPlayers.isEmpty {
+                    Label("Alle Spieler eingeteilt oder auf Bank", systemImage: "checkmark.circle.fill")
                         .foregroundStyle(.green)
                         .font(.subheadline)
                         .padding(.horizontal)
                 } else {
-                    LazyVGrid(
-                        columns: [GridItem(.adaptive(minimum: 90), spacing: 8)],
-                        spacing: 8
-                    ) {
-                        ForEach(store.benchPlayers, id: \.self) { name in
-                            Text(name)
-                                .font(.system(size: 12, weight: .medium))
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 8)
-                                .frame(maxWidth: .infinity)
-                                .background(.secondary.opacity(0.15),
-                                            in: RoundedRectangle(cornerRadius: 8))
-                                .foregroundStyle(.primary)
-                        }
+                    TagGrid(names: store.unselectedPlayers, symbol: "plus.circle.fill", tint: .secondary) { name in
+                        store.addToBench(name)
                     }
                     .padding(.horizontal)
                 }
             }
         }
         .padding(.bottom, 24)
+    }
+}
+
+// MARK: - Helpers
+
+private struct SectionHeader: View {
+    let title: String
+    let count: Int
+    let emptyLabel: String?
+
+    var body: some View {
+        HStack {
+            Text(title)
+                .font(.headline)
+            Spacer()
+            Text("\(count) Spieler")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .padding(.horizontal)
+    }
+}
+
+private struct TagGrid: View {
+    let names: [String]
+    let symbol: String
+    let tint: Color
+    let onTap: (String) -> Void
+
+    var body: some View {
+        LazyVGrid(
+            columns: [GridItem(.adaptive(minimum: 90), spacing: 8)],
+            spacing: 8
+        ) {
+            ForEach(names, id: \.self) { name in
+                Button { onTap(name) } label: {
+                    HStack(spacing: 4) {
+                        Text(name)
+                            .font(.system(size: 12, weight: .medium))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                        Image(systemName: symbol)
+                            .font(.system(size: 11))
+                            .foregroundStyle(tint)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .frame(maxWidth: .infinity)
+                    .background(tint.opacity(0.10), in: RoundedRectangle(cornerRadius: 8))
+                    .foregroundStyle(.primary)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(tint.opacity(0.3), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+}
+
+private struct PlayerGrid: View {
+    let names: [String]
+    let onTap: (String) -> Void
+
+    var body: some View {
+        LazyVGrid(
+            columns: [GridItem(.adaptive(minimum: 90), spacing: 8)],
+            spacing: 8
+        ) {
+            ForEach(names, id: \.self) { name in
+                Button { onTap(name) } label: {
+                    Text(name)
+                        .font(.system(size: 12, weight: .medium))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity)
+                        .background(.cyan.opacity(0.15), in: RoundedRectangle(cornerRadius: 8))
+                        .foregroundStyle(.primary)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(.cyan.opacity(0.4), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+        }
     }
 }

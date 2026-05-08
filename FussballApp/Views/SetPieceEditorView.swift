@@ -18,6 +18,7 @@ struct SetPieceEditorView: View {
     @State private var isDrawMode = false
     @State private var selectedArrowColor: ArrowColor = .blue
     @State private var pendingPlayer: String? = nil
+    @State private var pendingOpponent = false
     @State private var currentArrowPoints: [[Double]] = []
 
     init(store: LineupStore, piece: SetPiece) {
@@ -40,6 +41,7 @@ struct SetPieceEditorView: View {
                     Button {
                         isDrawMode.toggle()
                         pendingPlayer = nil
+                        pendingOpponent = false
                     } label: {
                         Label(isDrawMode ? "Zeichnen" : "Bewegen",
                               systemImage: isDrawMode ? "pencil.circle.fill" : "hand.point.up.left.fill")
@@ -70,6 +72,16 @@ struct SetPieceEditorView: View {
                         }
                         .buttonStyle(.plain)
                         .disabled(piece.arrows.isEmpty)
+                    } else {
+                        Button {
+                            pendingOpponent.toggle()
+                            pendingPlayer = nil
+                        } label: {
+                            Label("Gegner", systemImage: "person.fill.badge.plus")
+                                .font(.subheadline)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(pendingOpponent ? .red : .secondary)
                     }
 
                     Spacer()
@@ -81,6 +93,7 @@ struct SetPieceEditorView: View {
                 HalfPitchEditorView(
                     piece: $piece,
                     pendingPlayer: $pendingPlayer,
+                    pendingOpponent: $pendingOpponent,
                     currentArrowPoints: $currentArrowPoints,
                     isDrawMode: isDrawMode,
                     selectedArrowColor: selectedArrowColor
@@ -124,6 +137,7 @@ struct SetPieceEditorView: View {
 private struct HalfPitchEditorView: View {
     @Binding var piece: SetPiece
     @Binding var pendingPlayer: String?
+    @Binding var pendingOpponent: Bool
     @Binding var currentArrowPoints: [[Double]]
     let isDrawMode: Bool
     let selectedArrowColor: ArrowColor
@@ -189,6 +203,12 @@ private struct HalfPitchEditorView: View {
                                             max(0.02, min(0.98, drag.startLocation.y / h))
                                         ]
                                         pendingPlayer = nil
+                                    } else if pendingOpponent {
+                                        piece.opponentPositions.append([
+                                            max(0.02, min(0.98, drag.startLocation.x / w)),
+                                            max(0.02, min(0.98, drag.startLocation.y / h))
+                                        ])
+                                        pendingOpponent = false
                                     }
                                 }
                         )
@@ -234,6 +254,30 @@ private struct HalfPitchEditorView: View {
                                             let moved = hypot(drag.translation.width, drag.translation.height)
                                             if moved < 5 {
                                                 piece.playerPositions.removeValue(forKey: name)
+                                            }
+                                        }
+                                )
+                        }
+                    }
+
+                    // Opponent markers
+                    ForEach(Array(piece.opponentPositions.enumerated()), id: \.offset) { idx, pos in
+                        if pos.count == 2 {
+                            OpponentMarker()
+                                .position(x: pos[0] * w, y: pos[1] * h)
+                                .gesture(
+                                    DragGesture(minimumDistance: 0)
+                                        .onChanged { drag in
+                                            guard !isDrawMode else { return }
+                                            piece.opponentPositions[idx] = [
+                                                max(0.02, min(0.98, drag.location.x / w)),
+                                                max(0.02, min(0.98, drag.location.y / h))
+                                            ]
+                                        }
+                                        .onEnded { drag in
+                                            guard !isDrawMode else { return }
+                                            if hypot(drag.translation.width, drag.translation.height) < 5 {
+                                                piece.opponentPositions.remove(at: idx)
                                             }
                                         }
                                 )
@@ -385,5 +429,19 @@ private struct MiniChip: View {
             .padding(.vertical, 4)
             .background(.white, in: RoundedRectangle(cornerRadius: 6))
             .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+    }
+}
+
+private struct OpponentMarker: View {
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(Color.red.opacity(0.85))
+                .frame(width: 22, height: 22)
+                .shadow(color: .black.opacity(0.3), radius: 2, y: 1)
+            Image(systemName: "xmark")
+                .font(.system(size: 9, weight: .black))
+                .foregroundStyle(.white)
+        }
     }
 }

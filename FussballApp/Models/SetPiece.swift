@@ -53,6 +53,7 @@ struct SetPiece: Codable, Identifiable {
     var playerPositions: [String: [Double]]
     var ballPosition: [Double]
     var arrows: [DrawnArrow]
+    var opponentPositions: [[Double]]
 
     init(name: String = "", type: SetPieceType, phase: SetPiecePhase = .attacking) {
         self.name = name
@@ -61,5 +62,22 @@ struct SetPiece: Codable, Identifiable {
         self.playerPositions = [:]
         self.ballPosition = type.defaultBallPosition
         self.arrows = []
+        self.opponentPositions = []
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, type, phase, playerPositions, ballPosition, arrows, opponentPositions
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id                = try c.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        name              = try c.decode(String.self, forKey: .name)
+        type              = try c.decode(SetPieceType.self, forKey: .type)
+        phase             = try c.decodeIfPresent(SetPiecePhase.self, forKey: .phase) ?? .attacking
+        playerPositions   = try c.decodeIfPresent([String: [Double]].self, forKey: .playerPositions) ?? [:]
+        ballPosition      = try c.decodeIfPresent([Double].self, forKey: .ballPosition) ?? type.defaultBallPosition
+        arrows            = try c.decodeIfPresent([DrawnArrow].self, forKey: .arrows) ?? []
+        opponentPositions = try c.decodeIfPresent([[Double]].self, forKey: .opponentPositions) ?? []
     }
 }

@@ -105,6 +105,7 @@ struct TeamSetupView: View {
             team.lineups[i].lineup = team.lineups[i].lineup.filter { validNames.contains($0.value) }
             let validSlots = Set(team.lineups[i].lineup.keys)
             team.lineups[i].slotPositions = team.lineups[i].slotPositions.filter { validSlots.contains($0.key) }
+            team.lineups[i].benchPlayerNames = team.lineups[i].benchPlayerNames.filter { validNames.contains($0) }
         }
         team.captainName = validNames.contains(team.captainName ?? "") ? team.captainName : nil
         appStore.save(team: team)

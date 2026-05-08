@@ -5,13 +5,25 @@ struct SavedLineup: Codable {
     var formationRaw: String
     var lineup: [String: String]
     var slotPositions: [String: [Double]]
+    var benchPlayerNames: [String]
 
     init(name: String, formationRaw: String = "4-4-2",
-         lineup: [String: String] = [:], slotPositions: [String: [Double]] = [:]) {
+         lineup: [String: String] = [:], slotPositions: [String: [Double]] = [:],
+         benchPlayerNames: [String] = []) {
         self.name = name
         self.formationRaw = formationRaw
         self.lineup = lineup
         self.slotPositions = slotPositions
+        self.benchPlayerNames = benchPlayerNames
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        name             = try c.decode(String.self, forKey: .name)
+        formationRaw     = try c.decodeIfPresent(String.self, forKey: .formationRaw) ?? "4-4-2"
+        lineup           = try c.decodeIfPresent([String: String].self, forKey: .lineup) ?? [:]
+        slotPositions    = try c.decodeIfPresent([String: [Double]].self, forKey: .slotPositions) ?? [:]
+        benchPlayerNames = try c.decodeIfPresent([String].self, forKey: .benchPlayerNames) ?? []
     }
 }
 

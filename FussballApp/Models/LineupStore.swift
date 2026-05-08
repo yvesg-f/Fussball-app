@@ -22,13 +22,31 @@ final class LineupStore: ObservableObject {
 
     @Published var lineup: [String: String] = [:]
     @Published var slotPositions: [String: [Double]] = [:]
+    @Published var benchPlayerNames: [String] = []
     @Published var captainName: String?
     @Published var tacticNotes: String
     @Published var setPieces: [SetPiece]
 
     var benchPlayers: [String] {
         let assigned = Set(lineup.values)
-        return allPlayerNames.filter { !assigned.contains($0) }
+        return benchPlayerNames.filter { !assigned.contains($0) }
+    }
+
+    var unselectedPlayers: [String] {
+        let assigned = Set(lineup.values)
+        let benched  = Set(benchPlayerNames)
+        return allPlayerNames.filter { !assigned.contains($0) && !benched.contains($0) }
+    }
+
+    func addToBench(_ name: String) {
+        guard !benchPlayerNames.contains(name) else { return }
+        benchPlayerNames.append(name)
+        save()
+    }
+
+    func removeFromBench(_ name: String) {
+        benchPlayerNames.removeAll { $0 == name }
+        save()
     }
 
     func playerName(forSlot slot: Int) -> String? { lineup[String(slot)] }
@@ -50,6 +68,7 @@ final class LineupStore: ObservableObject {
     func assign(name: String, toSlot slot: Int) {
         lineup = lineup.filter { $0.value != name }
         lineup[String(slot)] = name
+        benchPlayerNames.removeAll { $0 == name }
         save()
     }
 
@@ -111,6 +130,7 @@ final class LineupStore: ObservableObject {
         self.formation = Formation(rawValue: active.formationRaw) ?? .f442
         self.lineup = active.lineup
         self.slotPositions = active.slotPositions
+        self.benchPlayerNames = active.benchPlayerNames
         self.captainName = team.captainName
         self.tacticNotes = team.tacticNotes
         self.setPieces = team.setPieces
@@ -124,6 +144,7 @@ final class LineupStore: ObservableObject {
         team.lineups[lineupIndex].formationRaw = formation.rawValue
         team.lineups[lineupIndex].lineup = lineup
         team.lineups[lineupIndex].slotPositions = slotPositions
+        team.lineups[lineupIndex].benchPlayerNames = benchPlayerNames
         let validPlayerNames = Set(team.playerNames)
         team.captainName = validPlayerNames.contains(captainName ?? "") ? captainName : nil
         team.tacticNotes = tacticNotes
