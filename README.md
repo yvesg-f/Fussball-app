@@ -1,4 +1,4 @@
-# Aufstellung — Fussball Taktik App
+# Tactix — Fussball Taktik App
 
 Native iOS-App zur Verwaltung von Fussball-Aufstellungen für ein Team. Gebaut mit SwiftUI, keine externen Abhängigkeiten.
 
