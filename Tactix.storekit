@@ -1,0 +1,35 @@
+{
+  "identifier" : "com.tactixapp.ios",
+  "nonConsumableProducts" : [
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "pro_001",
+      "localizations" : [
+        {
+          "description" : "Schalte alle Pro-Features frei: unbegrenzte Aufstellungen und Standards.",
+          "displayName" : "Tactix Pro",
+          "locale" : "de_DE"
+        },
+        {
+          "description" : "Unlock all Pro features: unlimited lineups and set pieces.",
+          "displayName" : "Tactix Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.tactixapp.ios.pro",
+      "referenceName" : "Tactix Pro",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "0",
+    "_developerTeamID" : "",
+    "_storeKitErrors" : []
+  },
+  "version" : {
+    "major" : 3,
+    "minor" : 0,
+    "patch" : 0
+  }
+}

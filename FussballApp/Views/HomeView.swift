@@ -6,9 +6,11 @@ enum AppRoute: Hashable {
 
 struct HomeView: View {
     @ObservedObject var appStore: AppStore
+    @EnvironmentObject private var purchaseManager: PurchaseManager
     @State private var path: [AppRoute] = []
     @State private var showSetup = false
     @State private var showAddLineup = false
+    @State private var showUpgrade = false
     @State private var deleteLineupIndex: Int? = nil
     @State private var renameLineupIndex: Int? = nil
     @State private var renameName = ""
@@ -40,6 +42,9 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showAddLineup) {
                 AddLineupSheet(appStore: appStore)
+            }
+            .sheet(isPresented: $showUpgrade) {
+                ProUpgradeView()
             }
             .alert("Aufstellung löschen?", isPresented: Binding(
                 get: { deleteLineupIndex != nil },
@@ -123,7 +128,13 @@ struct HomeView: View {
                 }
 
                 // New lineup button
-                Button { showAddLineup = true } label: {
+                Button {
+                    if purchaseManager.isPro || team.lineups.count < PurchaseManager.freeLineupLimit {
+                        showAddLineup = true
+                    } else {
+                        showUpgrade = true
+                    }
+                } label: {
                     HStack(spacing: 12) {
                         ZStack {
                             Circle()

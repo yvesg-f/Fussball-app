@@ -2,9 +2,11 @@ import SwiftUI
 
 struct SetPieceListView: View {
     @ObservedObject var store: LineupStore
+    @EnvironmentObject private var purchaseManager: PurchaseManager
     @Environment(\.dismiss) private var dismiss
     @State private var editingPiece: SetPiece? = nil
     @State private var showTypePicker = false
+    @State private var showUpgrade = false
 
     private var grouped: [(SetPieceType, [SetPiece])] {
         SetPieceType.allCases.compactMap { type in
@@ -67,13 +69,22 @@ struct SetPieceListView: View {
                     Button("Schließen") { dismiss() }
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button { showTypePicker = true } label: {
+                    Button {
+                        if purchaseManager.isPro || store.setPieces.count < PurchaseManager.freePieceLimit {
+                            showTypePicker = true
+                        } else {
+                            showUpgrade = true
+                        }
+                    } label: {
                         Image(systemName: "plus")
                     }
                 }
             }
             .sheet(item: $editingPiece) { piece in
                 SetPieceEditorView(store: store, piece: piece)
+            }
+            .sheet(isPresented: $showUpgrade) {
+                ProUpgradeView()
             }
             .confirmationDialog("Art des Standards", isPresented: $showTypePicker, titleVisibility: .visible) {
                 ForEach(SetPieceType.allCases, id: \.self) { type in
