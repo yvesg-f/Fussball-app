@@ -124,7 +124,8 @@ final class LineupStore: ObservableObject {
         team.lineups[lineupIndex].formationRaw = formation.rawValue
         team.lineups[lineupIndex].lineup = lineup
         team.lineups[lineupIndex].slotPositions = slotPositions
-        team.captainName = captainName
+        let validPlayerNames = Set(team.playerNames)
+        team.captainName = validPlayerNames.contains(captainName ?? "") ? captainName : nil
         team.tacticNotes = tacticNotes
         team.setPieces = setPieces
         appStore.save(team: team)

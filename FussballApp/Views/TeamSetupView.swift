@@ -12,6 +12,7 @@ struct TeamSetupView: View {
     @State private var teamName: String
     @State private var players: [PlayerEntry]
     @State private var newPlayer: String = ""
+    @State private var showDuplicateAlert = false
     @FocusState private var newPlayerFocused: Bool
 
     private var canSave: Bool {
@@ -63,6 +64,11 @@ struct TeamSetupView: View {
                     }
                 }
             }
+            .alert("Spieler bereits vorhanden", isPresented: $showDuplicateAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Ein Spieler mit diesem Namen existiert bereits.")
+            }
             .navigationTitle(appStore.team == nil ? "Neues Team" : "Team bearbeiten")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -81,6 +87,10 @@ struct TeamSetupView: View {
     private func addPlayer() {
         let name = newPlayer.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty, players.count < 25 else { return }
+        let isDuplicate = players.contains {
+            $0.name.trimmingCharacters(in: .whitespaces).lowercased() == name.lowercased()
+        }
+        guard !isDuplicate else { showDuplicateAlert = true; return }
         players.append(PlayerEntry(name: name))
         newPlayer = ""
         newPlayerFocused = true

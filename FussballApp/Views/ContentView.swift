@@ -7,6 +7,22 @@ struct ContentView: View {
     @State private var activeZones: Set<PitchZone> = []
     @State private var showNotes = false
     @State private var showSetPieces = false
+    @State private var pendingFormation: Formation? = nil
+    @State private var showFormationAlert = false
+
+    private var formationBinding: Binding<Formation> {
+        Binding(
+            get: { store.formation },
+            set: { newFormation in
+                if !store.lineup.isEmpty {
+                    pendingFormation = newFormation
+                    showFormationAlert = true
+                } else {
+                    store.formation = newFormation
+                }
+            }
+        )
+    }
 
     init(team: Team, lineupIndex: Int, appStore: AppStore) {
         let name = lineupIndex < team.lineups.count ? team.lineups[lineupIndex].name : "Aufstellung"
@@ -22,7 +38,7 @@ struct ContentView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Picker("Formation", selection: $store.formation) {
+                    Picker("Formation", selection: formationBinding) {
                         ForEach(Formation.allCases, id: \.self) { f in
                             Text(f.rawValue).tag(f)
                         }
@@ -42,6 +58,15 @@ struct ContentView: View {
         .navigationTitle(lineupName)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: store.formation) { _ in selectedSlot = nil }
+        .alert("Formation ändern?", isPresented: $showFormationAlert) {
+            Button("Ändern", role: .destructive) {
+                if let f = pendingFormation { store.formation = f }
+                pendingFormation = nil
+            }
+            Button("Abbrechen", role: .cancel) { pendingFormation = nil }
+        } message: {
+            Text("Alle Spielerpositionen werden zurückgesetzt.")
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {

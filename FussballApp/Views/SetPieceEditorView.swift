@@ -111,6 +111,7 @@ struct SetPieceEditorView: View {
                         store.saveSetPiece(piece)
                         dismiss()
                     }
+                    .disabled(piece.name.trimmingCharacters(in: .whitespaces).isEmpty)
                     .fontWeight(.semibold)
                 }
             }
