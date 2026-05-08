@@ -6,6 +6,7 @@ enum SetPieceType: String, Codable, CaseIterable {
     case freeKick    = "Freistoß"
     case penalty     = "Elfmeter"
     case throwIn     = "Einwurf"
+    case freeTactic  = "Freie Taktik"
 
     var symbol: String {
         switch self {
@@ -14,6 +15,7 @@ enum SetPieceType: String, Codable, CaseIterable {
         case .freeKick:    return "soccerball"
         case .penalty:     return "scope"
         case .throwIn:     return "arrow.up.circle"
+        case .freeTactic:  return "rectangle.and.pencil.and.ellipsis"
         }
     }
 
@@ -24,8 +26,11 @@ enum SetPieceType: String, Codable, CaseIterable {
         case .freeKick:    return [0.50, 0.38]
         case .penalty:     return [0.50, 0.20]
         case .throwIn:     return [0.03, 0.40]
+        case .freeTactic:  return [0.50, 0.50]
         }
     }
+
+    var usesFullPitch: Bool { self == .freeTactic }
 }
 
 enum SetPiecePhase: String, Codable, CaseIterable {

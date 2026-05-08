@@ -22,6 +22,13 @@ final class AppStore: ObservableObject {
         persist()
     }
 
+    func renameLineup(at index: Int, name: String) {
+        guard var t = team, index < t.lineups.count else { return }
+        t.lineups[index].name = name
+        team = t
+        persist()
+    }
+
     func deleteLineup(at index: Int) {
         guard var t = team, t.lineups.count > 1, index < t.lineups.count else { return }
         t.lineups.remove(at: index)

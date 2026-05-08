@@ -89,16 +89,17 @@ struct SetPieceEditorView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 8)
 
-                // Half pitch
+                // Pitch (half or full depending on type)
                 HalfPitchEditorView(
                     piece: $piece,
                     pendingPlayer: $pendingPlayer,
                     pendingOpponent: $pendingOpponent,
                     currentArrowPoints: $currentArrowPoints,
                     isDrawMode: isDrawMode,
-                    selectedArrowColor: selectedArrowColor
+                    selectedArrowColor: selectedArrowColor,
+                    isFullPitch: piece.type.usesFullPitch
                 )
-                .frame(height: 310)
+                .frame(height: piece.type.usesFullPitch ? 420 : 310)
                 .padding(.horizontal)
                 .padding(.vertical, 8)
 
@@ -141,6 +142,7 @@ private struct HalfPitchEditorView: View {
     @Binding var currentArrowPoints: [[Double]]
     let isDrawMode: Bool
     let selectedArrowColor: ArrowColor
+    var isFullPitch: Bool = false
 
     @State private var isDraggingBall = false
 
@@ -148,7 +150,15 @@ private struct HalfPitchEditorView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 14)
                 .fill(Color(red: 0.17, green: 0.54, blue: 0.20))
-                .overlay(HalfPitchLines().clipShape(RoundedRectangle(cornerRadius: 14)))
+                .overlay(
+                    Group {
+                        if isFullPitch {
+                            PitchLines().clipShape(RoundedRectangle(cornerRadius: 14))
+                        } else {
+                            HalfPitchLines().clipShape(RoundedRectangle(cornerRadius: 14))
+                        }
+                    }
+                )
                 .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(.white.opacity(0.25), lineWidth: 1))
 
             GeometryReader { geo in

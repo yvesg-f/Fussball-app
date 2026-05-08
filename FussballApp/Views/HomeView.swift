@@ -10,6 +10,8 @@ struct HomeView: View {
     @State private var showSetup = false
     @State private var showAddLineup = false
     @State private var deleteLineupIndex: Int? = nil
+    @State private var renameLineupIndex: Int? = nil
+    @State private var renameName = ""
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -52,6 +54,20 @@ struct HomeView: View {
                 if let i = deleteLineupIndex, let t = appStore.team, i < t.lineups.count {
                     Text("\"\(t.lineups[i].name)\" wird gelöscht.")
                 }
+            }
+            .alert("Umbenennen", isPresented: Binding(
+                get: { renameLineupIndex != nil },
+                set: { if !$0 { renameLineupIndex = nil } }
+            )) {
+                TextField("Name", text: $renameName)
+                Button("Umbenennen") {
+                    let n = renameName.trimmingCharacters(in: .whitespaces)
+                    if let i = renameLineupIndex, !n.isEmpty {
+                        appStore.renameLineup(at: i, name: n)
+                    }
+                    renameLineupIndex = nil
+                }
+                Button("Abbrechen", role: .cancel) { renameLineupIndex = nil }
             }
         }
     }
@@ -101,6 +117,7 @@ struct HomeView: View {
                         lineup: team.lineups[i],
                         canDelete: team.lineups.count > 1,
                         onOpen:   { path.append(.lineup(lineupIndex: i)) },
+                        onRename: { renameName = team.lineups[i].name; renameLineupIndex = i },
                         onDelete: { deleteLineupIndex = i }
                     )
                 }
@@ -156,12 +173,13 @@ private struct LineupCard: View {
     let lineup: SavedLineup
     let canDelete: Bool
     let onOpen: () -> Void
+    let onRename: () -> Void
     let onDelete: () -> Void
 
     private var placedCount: Int { lineup.lineup.values.count }
 
     var body: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: 8) {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()
@@ -183,6 +201,14 @@ private struct LineupCard: View {
             }
             .contentShape(Rectangle())
             .onTapGesture { onOpen() }
+
+            Button(action: onRename) {
+                Image(systemName: "pencil")
+                    .foregroundStyle(.secondary)
+                    .padding(10)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
 
             if canDelete {
                 Button(action: onDelete) {
