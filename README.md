@@ -6,31 +6,42 @@ Native iOS-App zur Verwaltung von Fussball-Aufstellungen für ein Team. Gebaut m
 
 **Team & Spieler**
 - Ein Team mit bis zu 25 Spielern definieren
-- Spielernamen jederzeit bearbeiten oder löschen
+- Spielernamen jederzeit bearbeiten oder löschen (doppelte Namen werden verhindert)
 - Spieler bleiben über alle Aufstellungen gleich
 
 **Aufstellungen**
-- Beliebig viele benannte Aufstellungen erstellen (Plan A, Plan B, Plan C …)
+- Beliebig viele benannte Aufstellungen erstellen und umbenennen (Bleistift-Icon)
 - Jede Aufstellung hat eigene Formation, Positionen und Spielerzuteilungen
+- Formationswechsel fragt vor dem Zurücksetzen der Positionen nach Bestätigung
 - Aufstellungen unabhängig voneinander bearbeiten und speichern
 
 **Spielfeld**
 - 8 Formationen: 4-4-2 · 4-3-3 · 3-5-2 · 4-2-3-1 · 5-3-2 · 4-1-4-1 · 3-4-3 · 4-5-1
 - Grünes Spielfeld mit Feldlinien
 - Spieler per Drag frei auf dem Feld positionieren
-- Spieler antippen → auswechseln oder von der Bank tauschen
+- Spieler antippen → auswechseln, Kapitän setzen oder von der Bank tauschen
 - Torwart-Chip in Gelb, Feldspieler in Weiss
 - Kapitän-Markierung (Krone)
 
 **Feldzonen**
 - 5 Feldzonen einblendbar: Links · Halbspur L · Zentrum · Halbspur R · Rechts
 
-**Standards**
-- Eckball links/rechts, Freistoß, Elfmeter, Einwurf
-- Spieler auf dem Halbfeld platzieren und verschieben
+**Bank**
+- Spieler haben 3 Status: Startelf · Bank · Nicht dabei
+- Bank-Spieler über `+` hinzufügen, über `−` entfernen
+- „Nicht dabei"-Spieler können im Laufe des Spiels nicht eingewechselt werden
+- Tauschen mit einem Bankspieler direkt über den Auswahl-Panel
+
+**Standards & Taktik**
+- Typen: Eckball links/rechts · Freistoß · Elfmeter · Einwurf · **Freie Taktik**
+- Freie Taktik zeigt das **komplette Spielfeld** für eigene Formations- oder Spielzug-Skizzen
+- Eigene Spieler auf dem Halbfeld oder Gesamtfeld platzieren und verschieben
+- **Gegner-Marker** (rote X) platzieren, verschieben und entfernen
 - Ball-Position frei verschiebbar
-- Laufwege zeichnen (Lauf, Flanke, Block)
+- Laufwege zeichnen: Lauf (blau) · Flanke (orange) · Block (rot)
+- Letzten Pfeil rückgängig machen
 - Angriff- und Verteidigung-Phase
+- Name des Standards wird vor dem Speichern erzwungen
 
 **Taktiknotizen**
 - Freitext-Notizen pro Team speichern
@@ -38,6 +49,7 @@ Native iOS-App zur Verwaltung von Fussball-Aufstellungen für ein Team. Gebaut m
 **Allgemein**
 - Alles wird lokal gespeichert (UserDefaults, kein Account nötig)
 - Light & Dark Mode
+- Datenmigration von älteren App-Versionen
 
 ---
 
@@ -89,6 +101,8 @@ Oder in Xcode: **File → Open** → `FussballApp.xcodeproj` auswählen.
 
 Xcode baut die App und lädt sie direkt aufs iPhone. Beim ersten Mal dauert das 1–2 Minuten.
 
+> **Wichtig nach Icon-Änderungen:** Zuerst `⇧⌘K` (Clean Build Folder), dann App vom Gerät löschen, dann neu installieren — sonst zeigt iOS das alte Icon aus dem Cache.
+
 ### 8. App auf dem iPhone freischalten (einmalig)
 
 Nach der Installation erscheint die App, lässt sich aber noch nicht öffnen.
@@ -113,20 +127,20 @@ FussballApp/
     Team.swift                    ← Team & SavedLineup Datenmodell
     AppStore.swift                ← Team-Persistenz (UserDefaults)
     LineupStore.swift             ← Aufstellungs-State pro Lineup-Index
-    SetPiece.swift                ← Standards-Datenmodell
+    SetPiece.swift                ← Standards-Datenmodell inkl. Gegner-Positionen
   Views/
-    HomeView.swift                ← Hauptmenü (Aufstellungs-Übersicht)
+    HomeView.swift                ← Hauptmenü mit Aufstellungs-Übersicht und Umbenennen
     TeamSetupView.swift           ← Spieler hinzufügen / bearbeiten
     ContentView.swift             ← Aufstellungs-View mit Formation & Bank
     PitchView.swift               ← Spielfeld mit Drag & Drop
-    PitchLines.swift              ← Feldlinien (Canvas)
+    PitchLines.swift              ← Feldlinien ganzes Spielfeld (Canvas)
     PitchZone.swift               ← Feldzonen-Definitionen
     HalfPitchLines.swift          ← Halbfeld-Linien für Standards
     PlayerChip.swift              ← Spieler-Chip
-    BenchView.swift               ← Bank mit Tausch-Panel
+    BenchView.swift               ← Bank (Bank / Nicht dabei) mit Tausch-Panel
     TacticNotesView.swift         ← Taktiknotizen
     SetPieceListView.swift        ← Standards-Übersicht
-    SetPieceEditorView.swift      ← Standards-Editor mit Zeichnen
+    SetPieceEditorView.swift      ← Standards-Editor (Halbfeld & Gesamtfeld, Gegner, Pfeile)
   Assets.xcassets/
-    AppIcon.appiconset/           ← App-Icon (1024×1024)
+    AppIcon.appiconset/           ← App-Icon (1024×1024, RGB, kein Alpha)
 ```

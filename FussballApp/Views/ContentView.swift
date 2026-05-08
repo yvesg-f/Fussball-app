@@ -57,7 +57,7 @@ struct ContentView: View {
         }
         .navigationTitle(lineupName)
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: store.formation) { _ in selectedSlot = nil }
+        .onChange(of: store.formation) { selectedSlot = nil }
         .alert("Formation ändern?", isPresented: $showFormationAlert) {
             Button("Ändern", role: .destructive) {
                 if let f = pendingFormation { store.formation = f }

@@ -38,6 +38,12 @@ final class LineupStore: ObservableObject {
         return allPlayerNames.filter { !assigned.contains($0) && !benched.contains($0) }
     }
 
+    // All players not yet placed on the pitch (used by slot picker)
+    var playersNotInLineup: [String] {
+        let assigned = Set(lineup.values)
+        return allPlayerNames.filter { !assigned.contains($0) }
+    }
+
     func addToBench(_ name: String) {
         guard !benchPlayerNames.contains(name) else { return }
         benchPlayerNames.append(name)
