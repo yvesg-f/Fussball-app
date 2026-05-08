@@ -12,6 +12,7 @@ private extension ArrowColor {
 
 struct SetPieceEditorView: View {
     @ObservedObject var store: LineupStore
+    @EnvironmentObject private var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
 
     @State private var piece: SetPiece
@@ -30,7 +31,7 @@ struct SetPieceEditorView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 // Name field
-                TextField("Name des Standards…", text: $piece.name)
+                TextField(settings.t("set_piece_name_placeholder"), text: $piece.name)
                     .font(.headline)
                     .padding(.horizontal)
                     .padding(.vertical, 10)
@@ -43,7 +44,7 @@ struct SetPieceEditorView: View {
                         pendingPlayer = nil
                         pendingOpponent = false
                     } label: {
-                        Label(isDrawMode ? "Zeichnen" : "Bewegen",
+                        Label(isDrawMode ? settings.t("draw") : settings.t("move"),
                               systemImage: isDrawMode ? "pencil.circle.fill" : "hand.point.up.left.fill")
                             .font(.subheadline)
                     }
@@ -77,7 +78,7 @@ struct SetPieceEditorView: View {
                             pendingOpponent.toggle()
                             pendingPlayer = nil
                         } label: {
-                            Label("Gegner", systemImage: "person.fill.badge.plus")
+                            Label(settings.t("opponent"), systemImage: "person.fill.badge.plus")
                                 .font(.subheadline)
                         }
                         .buttonStyle(.bordered)
@@ -118,10 +119,10 @@ struct SetPieceEditorView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") { dismiss() }
+                    Button(settings.t("cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Speichern") {
+                    Button(settings.t("save")) {
                         store.saveSetPiece(piece)
                         dismiss()
                     }

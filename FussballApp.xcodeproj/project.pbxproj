@@ -26,6 +26,11 @@
 		CC000000000000000000000019 /* TacticNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000019 /* TacticNotesView.swift */; };
 		CC000000000000000000000020 /* SetPieceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000020 /* SetPieceListView.swift */; };
 		CC000000000000000000000021 /* SetPieceEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000021 /* SetPieceEditorView.swift */; };
+		CC000000000000000000000022 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000022 /* PurchaseManager.swift */; };
+		CC000000000000000000000023 /* ProUpgradeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000023 /* ProUpgradeView.swift */; };
+		CC000000000000000000000024 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000024 /* AppSettings.swift */; };
+		CC000000000000000000000025 /* Translations.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000025 /* Translations.swift */; };
+		CC000000000000000000000026 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000026 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +54,11 @@
 		BB000000000000000000000019 /* TacticNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TacticNotesView.swift; sourceTree = "<group>"; };
 		BB000000000000000000000020 /* SetPieceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPieceListView.swift; sourceTree = "<group>"; };
 		BB000000000000000000000021 /* SetPieceEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPieceEditorView.swift; sourceTree = "<group>"; };
+		BB000000000000000000000022 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
+		BB000000000000000000000023 /* ProUpgradeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProUpgradeView.swift; sourceTree = "<group>"; };
+		BB000000000000000000000024 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		BB000000000000000000000025 /* Translations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Translations.swift; sourceTree = "<group>"; };
+		BB000000000000000000000026 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -95,6 +105,9 @@
 				BB000000000000000000000012 /* Team.swift */,
 				BB000000000000000000000013 /* AppStore.swift */,
 				BB000000000000000000000016 /* SetPiece.swift */,
+				BB000000000000000000000022 /* PurchaseManager.swift */,
+				BB000000000000000000000024 /* AppSettings.swift */,
+				BB000000000000000000000025 /* Translations.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -114,6 +127,8 @@
 				BB000000000000000000000019 /* TacticNotesView.swift */,
 				BB000000000000000000000020 /* SetPieceListView.swift */,
 				BB000000000000000000000021 /* SetPieceEditorView.swift */,
+				BB000000000000000000000023 /* ProUpgradeView.swift */,
+				BB000000000000000000000026 /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -194,6 +209,11 @@
 				CC000000000000000000000019 /* TacticNotesView.swift in Sources */,
 				CC000000000000000000000020 /* SetPieceListView.swift in Sources */,
 				CC000000000000000000000021 /* SetPieceEditorView.swift in Sources */,
+				CC000000000000000000000022 /* PurchaseManager.swift in Sources */,
+				CC000000000000000000000023 /* ProUpgradeView.swift in Sources */,
+				CC000000000000000000000024 /* AppSettings.swift in Sources */,
+				CC000000000000000000000025 /* Translations.swift in Sources */,
+				CC000000000000000000000026 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

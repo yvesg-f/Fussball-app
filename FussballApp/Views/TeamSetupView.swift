@@ -7,6 +7,7 @@ private struct PlayerEntry: Identifiable {
 
 struct TeamSetupView: View {
     let appStore: AppStore
+    @EnvironmentObject private var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
 
     @State private var teamName: String
@@ -29,28 +30,28 @@ struct TeamSetupView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Team Name") {
-                    TextField("z.B. FC Mein Team", text: $teamName)
+                Section(settings.t("team_name")) {
+                    TextField(settings.t("team_name_placeholder"), text: $teamName)
                 }
 
                 Section {
                     ForEach($players) { $player in
-                        TextField("Spielername", text: $player.name)
+                        TextField(settings.t("player_name_placeholder"), text: $player.name)
                     }
                     .onDelete { players.remove(atOffsets: $0) }
 
                     if players.count < 25 {
                         HStack {
-                            TextField("Name hinzufügen…", text: $newPlayer)
+                            TextField(settings.t("add_name_placeholder"), text: $newPlayer)
                                 .focused($newPlayerFocused)
                                 .onSubmit { addPlayer() }
-                            Button("Hinzufügen") { addPlayer() }
+                            Button(settings.t("add")) { addPlayer() }
                                 .disabled(newPlayer.trimmingCharacters(in: .whitespaces).isEmpty)
                         }
                     }
                 } header: {
                     HStack {
-                        Text("Spieler (\(players.count)/25)")
+                        Text(String(format: settings.t("players_count"), players.count))
                         Spacer()
                         if !players.isEmpty {
                             EditButton()
@@ -59,24 +60,24 @@ struct TeamSetupView: View {
                     }
                 } footer: {
                     if players.isEmpty {
-                        Text("Mindestens 1 Spieler erforderlich.")
+                        Text(settings.t("at_least_one_player"))
                             .foregroundStyle(.red)
                     }
                 }
             }
-            .alert("Spieler bereits vorhanden", isPresented: $showDuplicateAlert) {
-                Button("OK", role: .cancel) {}
+            .alert(settings.t("duplicate_player_title"), isPresented: $showDuplicateAlert) {
+                Button(settings.t("ok"), role: .cancel) {}
             } message: {
-                Text("Ein Spieler mit diesem Namen existiert bereits.")
+                Text(settings.t("duplicate_player_message"))
             }
-            .navigationTitle(appStore.team == nil ? "Neues Team" : "Team bearbeiten")
+            .navigationTitle(appStore.team == nil ? settings.t("new_team") : settings.t("edit_team"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") { dismiss() }
+                    Button(settings.t("cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Speichern") { save() }
+                    Button(settings.t("save")) { save() }
                         .disabled(!canSave)
                         .fontWeight(.semibold)
                 }

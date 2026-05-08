@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var store: LineupStore
+    @EnvironmentObject private var settings: AppSettings
     private let lineupName: String
     @State private var selectedSlot: Int? = nil
     @State private var activeZones: Set<PitchZone> = []
@@ -25,7 +26,7 @@ struct ContentView: View {
     }
 
     init(team: Team, lineupIndex: Int, appStore: AppStore) {
-        let name = lineupIndex < team.lineups.count ? team.lineups[lineupIndex].name : "Aufstellung"
+        let name = lineupIndex < team.lineups.count ? team.lineups[lineupIndex].name : "Lineup"
         self.lineupName = name
         _store = StateObject(wrappedValue: LineupStore(team: team, lineupIndex: lineupIndex, appStore: appStore))
     }
@@ -34,11 +35,11 @@ struct ContentView: View {
         ScrollView {
             VStack(spacing: 16) {
                 HStack {
-                    Text("Formation")
+                    Text(settings.t("formation"))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Picker("Formation", selection: formationBinding) {
+                    Picker(settings.t("formation"), selection: formationBinding) {
                         ForEach(Formation.allCases, id: \.self) { f in
                             Text(f.rawValue).tag(f)
                         }
@@ -58,23 +59,23 @@ struct ContentView: View {
         .navigationTitle(lineupName)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: store.formation) { _ in selectedSlot = nil }
-        .alert("Formation ändern?", isPresented: $showFormationAlert) {
-            Button("Ändern", role: .destructive) {
+        .alert(settings.t("change_formation_title"), isPresented: $showFormationAlert) {
+            Button(settings.t("change"), role: .destructive) {
                 if let f = pendingFormation { store.formation = f }
                 pendingFormation = nil
             }
-            Button("Abbrechen", role: .cancel) { pendingFormation = nil }
+            Button(settings.t("cancel"), role: .cancel) { pendingFormation = nil }
         } message: {
-            Text("Alle Spielerpositionen werden zurückgesetzt.")
+            Text(settings.t("reset_warning"))
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
                     Button { showSetPieces = true } label: {
-                        Label("Standards", systemImage: "figure.soccer")
+                        Label(settings.t("set_pieces"), systemImage: "figure.soccer")
                     }
                     Button { showNotes = true } label: {
-                        Label("Taktiknotizen", systemImage: "note.text")
+                        Label(settings.t("tactic_notes"), systemImage: "note.text")
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")

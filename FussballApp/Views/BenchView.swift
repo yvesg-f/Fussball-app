@@ -2,6 +2,7 @@ import SwiftUI
 
 struct BenchView: View {
     @ObservedObject var store: LineupStore
+    @EnvironmentObject private var settings: AppSettings
     @Binding var selectedSlot: Int?
 
     private var selectedName: String? {
@@ -19,7 +20,7 @@ struct BenchView: View {
                     HStack {
                         Image(systemName: "person.fill.checkmark")
                             .foregroundStyle(.cyan)
-                        Text("\(name) ausgewählt")
+                        Text(String(format: settings.t("selected_player"), name))
                             .font(.headline)
                         Spacer()
                         Button {
@@ -36,7 +37,7 @@ struct BenchView: View {
                         Button {
                             store.toggleCaptain(for: name)
                         } label: {
-                            Label(isCaptain ? "Kein Kapitän" : "Kapitän",
+                            Label(isCaptain ? settings.t("remove_captain") : settings.t("set_captain"),
                                   systemImage: isCaptain ? "crown" : "crown.fill")
                                 .frame(maxWidth: .infinity)
                         }
@@ -47,7 +48,7 @@ struct BenchView: View {
                             store.remove(fromSlot: slot)
                             selectedSlot = nil
                         } label: {
-                            Label("Entfernen", systemImage: "person.fill.xmark")
+                            Label(settings.t("remove"), systemImage: "person.fill.xmark")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.borderedProminent)
@@ -56,7 +57,7 @@ struct BenchView: View {
                     .padding(.horizontal)
 
                     if !store.benchPlayers.isEmpty {
-                        Text("Tauschen mit:")
+                        Text(settings.t("swap_with"))
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -76,9 +77,9 @@ struct BenchView: View {
             } else {
                 // --- Bank ---
                 SectionHeader(
-                    title: "Bank",
+                    title: settings.t("bench"),
                     count: store.benchPlayers.count,
-                    emptyLabel: "Keine Bankspieler eingestellt"
+                    emptyLabel: settings.t("no_bench_players")
                 )
 
                 if !store.benchPlayers.isEmpty {
@@ -90,13 +91,13 @@ struct BenchView: View {
 
                 // --- Nicht dabei ---
                 SectionHeader(
-                    title: "Nicht dabei",
+                    title: settings.t("not_available"),
                     count: store.unselectedPlayers.count,
                     emptyLabel: nil
                 )
 
                 if store.unselectedPlayers.isEmpty {
-                    Label("Alle Spieler eingeteilt oder auf Bank", systemImage: "checkmark.circle.fill")
+                    Label(settings.t("all_assigned_or_bench"), systemImage: "checkmark.circle.fill")
                         .foregroundStyle(.green)
                         .font(.subheadline)
                         .padding(.horizontal)
@@ -115,6 +116,7 @@ struct BenchView: View {
 // MARK: - Helpers
 
 private struct SectionHeader: View {
+    @EnvironmentObject private var settings: AppSettings
     let title: String
     let count: Int
     let emptyLabel: String?
@@ -124,7 +126,7 @@ private struct SectionHeader: View {
             Text(title)
                 .font(.headline)
             Spacer()
-            Text("\(count) Spieler")
+            Text(String(format: settings.t("player_count"), count))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }

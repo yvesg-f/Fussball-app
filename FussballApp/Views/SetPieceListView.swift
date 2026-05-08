@@ -3,6 +3,7 @@ import SwiftUI
 struct SetPieceListView: View {
     @ObservedObject var store: LineupStore
     @EnvironmentObject private var purchaseManager: PurchaseManager
+    @EnvironmentObject private var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
     @State private var editingPiece: SetPiece? = nil
     @State private var showTypePicker = false
@@ -23,9 +24,9 @@ struct SetPieceListView: View {
                         Image(systemName: "figure.soccer")
                             .font(.system(size: 52))
                             .foregroundStyle(.secondary)
-                        Text("Keine Standards gespeichert")
+                        Text(settings.t("no_set_pieces"))
                             .font(.headline)
-                        Text("Tippe auf + um einen Standard zu erstellen.")
+                        Text(settings.t("add_set_piece_hint"))
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
@@ -44,7 +45,7 @@ struct SetPieceListView: View {
                                             Image(systemName: type.symbol)
                                                 .foregroundStyle(.green)
                                                 .frame(width: 24)
-                                            Text(piece.name.isEmpty ? "Unbenannt" : piece.name)
+                                            Text(piece.name.isEmpty ? settings.t("unnamed") : piece.name)
                                                 .foregroundStyle(.primary)
                                             Spacer()
                                             Image(systemName: "chevron.right")
@@ -62,11 +63,11 @@ struct SetPieceListView: View {
                     }
                 }
             }
-            .navigationTitle("Standards")
+            .navigationTitle(settings.t("set_pieces_title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Schließen") { dismiss() }
+                    Button(settings.t("close")) { dismiss() }
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -86,13 +87,15 @@ struct SetPieceListView: View {
             .sheet(isPresented: $showUpgrade) {
                 ProUpgradeView()
             }
-            .confirmationDialog("Art des Standards", isPresented: $showTypePicker, titleVisibility: .visible) {
+            .confirmationDialog(settings.t("set_piece_type_title"),
+                                isPresented: $showTypePicker,
+                                titleVisibility: .visible) {
                 ForEach(SetPieceType.allCases, id: \.self) { type in
                     Button(type.rawValue) {
                         editingPiece = SetPiece(type: type)
                     }
                 }
-                Button("Abbrechen", role: .cancel) {}
+                Button(settings.t("cancel"), role: .cancel) {}
             }
         }
     }

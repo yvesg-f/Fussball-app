@@ -137,6 +137,7 @@ private struct SlotChipView: View {
 
 private struct EmptySlotPickerSheet: View {
     @ObservedObject var store: LineupStore
+    @EnvironmentObject private var settings: AppSettings
     let slot: Int
     @Environment(\.dismiss) private var dismiss
 
@@ -148,7 +149,7 @@ private struct EmptySlotPickerSheet: View {
                         Image(systemName: "person.slash")
                             .font(.system(size: 48))
                             .foregroundStyle(.secondary)
-                        Text("Alle Spieler eingeteilt")
+                        Text(settings.t("all_players_assigned"))
                             .font(.headline)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -164,11 +165,11 @@ private struct EmptySlotPickerSheet: View {
                     }
                 }
             }
-            .navigationTitle("Spieler wählen")
+            .navigationTitle(settings.t("select_player"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") { dismiss() }
+                    Button(settings.t("cancel")) { dismiss() }
                 }
             }
         }

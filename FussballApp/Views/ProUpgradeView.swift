@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProUpgradeView: View {
     @EnvironmentObject private var pm: PurchaseManager
+    @EnvironmentObject private var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
 
     @State private var isPurchasing = false
@@ -25,7 +26,7 @@ struct ProUpgradeView: View {
                         }
                         Text("Tactix Pro")
                             .font(.title.bold())
-                        Text("Einmalig kaufen — für immer nutzen")
+                        Text(settings.t("pro_subtitle"))
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -34,14 +35,16 @@ struct ProUpgradeView: View {
                     // Feature list
                     VStack(alignment: .leading, spacing: 14) {
                         FeatureRow(icon: "person.3.fill",
-                                   title: "Unbegrenzte Aufstellungen",
-                                   subtitle: "Gratis: max. \(PurchaseManager.freeLineupLimit)")
+                                   title: settings.t("unlimited_lineups"),
+                                   subtitle: String(format: settings.t("free_max_lineups"),
+                                                    PurchaseManager.freeLineupLimit))
                         FeatureRow(icon: "figure.soccer",
-                                   title: "Unbegrenzte Standards",
-                                   subtitle: "Gratis: max. \(PurchaseManager.freePieceLimit)")
+                                   title: settings.t("unlimited_set_pieces"),
+                                   subtitle: String(format: settings.t("free_max_lineups"),
+                                                    PurchaseManager.freePieceLimit))
                         FeatureRow(icon: "checkmark.shield.fill",
-                                   title: "Alle zukünftigen Pro-Features",
-                                   subtitle: "Automatisch inklusive")
+                                   title: settings.t("future_features"),
+                                   subtitle: settings.t("auto_included"))
                     }
                     .padding()
                     .background(Color(.secondarySystemBackground),
@@ -57,10 +60,10 @@ struct ProUpgradeView: View {
                                 if isPurchasing {
                                     ProgressView().tint(.white)
                                 } else if let product = pm.proProduct {
-                                    Text("Freischalten für \(product.displayPrice)")
+                                    Text(String(format: settings.t("unlock_for"), product.displayPrice))
                                         .fontWeight(.semibold)
                                 } else {
-                                    Text("Laden…")
+                                    Text(settings.t("loading"))
                                         .fontWeight(.semibold)
                                 }
                             }
@@ -80,7 +83,7 @@ struct ProUpgradeView: View {
                                 if isRestoring {
                                     ProgressView()
                                 } else {
-                                    Text("Bereits gekauft? Wiederherstellen")
+                                    Text(settings.t("restore_purchase"))
                                 }
                             }
                             .font(.subheadline)
@@ -89,7 +92,7 @@ struct ProUpgradeView: View {
                         .disabled(isRestoring)
                     }
 
-                    Text("Einmalige Zahlung · Kein Abo · Kein Account")
+                    Text(settings.t("payment_footer"))
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                         .padding(.bottom, 8)
@@ -98,14 +101,14 @@ struct ProUpgradeView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Schließen") { dismiss() }
+                    Button(settings.t("close")) { dismiss() }
                 }
             }
-            .alert("Fehler", isPresented: Binding(
+            .alert(settings.t("error"), isPresented: Binding(
                 get: { errorMessage != nil },
                 set: { if !$0 { errorMessage = nil } }
             )) {
-                Button("OK", role: .cancel) {}
+                Button(settings.t("ok"), role: .cancel) {}
             } message: {
                 Text(errorMessage ?? "")
             }

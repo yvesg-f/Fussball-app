@@ -7,10 +7,12 @@ enum AppRoute: Hashable {
 struct HomeView: View {
     @ObservedObject var appStore: AppStore
     @EnvironmentObject private var purchaseManager: PurchaseManager
+    @EnvironmentObject private var settings: AppSettings
     @State private var path: [AppRoute] = []
     @State private var showSetup = false
     @State private var showAddLineup = false
     @State private var showUpgrade = false
+    @State private var showSettings = false
     @State private var deleteLineupIndex: Int? = nil
     @State private var renameLineupIndex: Int? = nil
     @State private var renameName = ""
@@ -46,33 +48,36 @@ struct HomeView: View {
             .sheet(isPresented: $showUpgrade) {
                 ProUpgradeView()
             }
-            .alert("Aufstellung löschen?", isPresented: Binding(
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
+            }
+            .alert(settings.t("delete_lineup_title"), isPresented: Binding(
                 get: { deleteLineupIndex != nil },
                 set: { if !$0 { deleteLineupIndex = nil } }
             )) {
-                Button("Löschen", role: .destructive) {
+                Button(settings.t("delete"), role: .destructive) {
                     if let i = deleteLineupIndex { appStore.deleteLineup(at: i) }
                     deleteLineupIndex = nil
                 }
-                Button("Abbrechen", role: .cancel) { deleteLineupIndex = nil }
+                Button(settings.t("cancel"), role: .cancel) { deleteLineupIndex = nil }
             } message: {
                 if let i = deleteLineupIndex, let t = appStore.team, i < t.lineups.count {
-                    Text("\"\(t.lineups[i].name)\" wird gelöscht.")
+                    Text(String(format: settings.t("delete_lineup_message"), t.lineups[i].name))
                 }
             }
-            .alert("Umbenennen", isPresented: Binding(
+            .alert(settings.t("rename_title"), isPresented: Binding(
                 get: { renameLineupIndex != nil },
                 set: { if !$0 { renameLineupIndex = nil } }
             )) {
-                TextField("Name", text: $renameName)
-                Button("Umbenennen") {
+                TextField(settings.t("name"), text: $renameName)
+                Button(settings.t("rename")) {
                     let n = renameName.trimmingCharacters(in: .whitespaces)
                     if let i = renameLineupIndex, !n.isEmpty {
                         appStore.renameLineup(at: i, name: n)
                     }
                     renameLineupIndex = nil
                 }
-                Button("Abbrechen", role: .cancel) { renameLineupIndex = nil }
+                Button(settings.t("cancel"), role: .cancel) { renameLineupIndex = nil }
             }
         }
     }
@@ -86,16 +91,26 @@ struct HomeView: View {
                 .foregroundStyle(.green)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(appStore.team?.name ?? "Aufstellung")
+                Text(appStore.team?.name ?? settings.t("lineup"))
                     .font(.title2.bold())
                 if let team = appStore.team {
-                    Text("\(team.playerNames.count) Spieler · \(team.lineups.count) Aufstellungen")
+                    Text(String(format: settings.t("players_lineups"),
+                                team.playerNames.count, team.lineups.count))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
 
             Spacer()
+
+            Button { showSettings = true } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 20))
+                    .foregroundStyle(.secondary)
+                    .padding(8)
+                    .background(Color(.secondarySystemFill), in: Circle())
+            }
+            .buttonStyle(.plain)
 
             Button { showSetup = true } label: {
                 Image(systemName: appStore.team == nil ? "person.badge.plus" : "person.crop.circle.badge.checkmark")
@@ -127,7 +142,6 @@ struct HomeView: View {
                     )
                 }
 
-                // New lineup button
                 Button {
                     if purchaseManager.isPro || team.lineups.count < PurchaseManager.freeLineupLimit {
                         showAddLineup = true
@@ -143,7 +157,7 @@ struct HomeView: View {
                             Image(systemName: "plus")
                                 .foregroundStyle(.tertiary)
                         }
-                        Text("Neue Aufstellung")
+                        Text(settings.t("new_lineup"))
                             .foregroundStyle(.secondary)
                         Spacer()
                     }
@@ -166,9 +180,9 @@ struct HomeView: View {
             Image(systemName: "person.3")
                 .font(.system(size: 52))
                 .foregroundStyle(.secondary)
-            Text("Noch keine Spieler")
+            Text(settings.t("no_players_title"))
                 .font(.headline)
-            Text("Tippe auf das Icon oben rechts um dein Team zu erstellen.")
+            Text(settings.t("no_players_message"))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -181,6 +195,7 @@ struct HomeView: View {
 // MARK: - Lineup card
 
 private struct LineupCard: View {
+    @EnvironmentObject private var settings: AppSettings
     let lineup: SavedLineup
     let canDelete: Bool
     let onOpen: () -> Void
@@ -204,7 +219,8 @@ private struct LineupCard: View {
                     Text(lineup.name)
                         .font(.headline)
                         .foregroundStyle(.primary)
-                    Text("\(lineup.formationRaw) · \(placedCount)/11 eingesetzt")
+                    Text(String(format: settings.t("formation_placed"),
+                                lineup.formationRaw, placedCount))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -241,6 +257,7 @@ private struct LineupCard: View {
 // MARK: - Add lineup sheet
 
 private struct AddLineupSheet: View {
+    @EnvironmentObject private var settings: AppSettings
     let appStore: AppStore
     @Environment(\.dismiss) private var dismiss
     @State private var name = ""
@@ -256,18 +273,18 @@ private struct AddLineupSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Name der Aufstellung") {
-                    TextField("z.B. Plan C", text: $name)
+                Section(settings.t("lineup_name_section")) {
+                    TextField(settings.t("lineup_name_placeholder"), text: $name)
                 }
             }
-            .navigationTitle("Neue Aufstellung")
+            .navigationTitle(settings.t("new_lineup"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") { dismiss() }
+                    Button(settings.t("cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Hinzufügen") {
+                    Button(settings.t("add")) {
                         let n = name.trimmingCharacters(in: .whitespaces)
                         appStore.addLineup(name: n.isEmpty ? suggestedName : n)
                         dismiss()

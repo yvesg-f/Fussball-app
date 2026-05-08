@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TacticNotesView: View {
     @ObservedObject var store: LineupStore
+    @EnvironmentObject private var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
     @State private var draft: String = ""
 
@@ -9,14 +10,14 @@ struct TacticNotesView: View {
         NavigationStack {
             TextEditor(text: $draft)
                 .padding()
-                .navigationTitle("Taktiknotizen")
+                .navigationTitle(settings.t("tactic_notes_title"))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("Abbrechen") { dismiss() }
+                        Button(settings.t("cancel")) { dismiss() }
                     }
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Speichern") {
+                        Button(settings.t("save")) {
                             store.saveTacticNotes(draft)
                             dismiss()
                         }
