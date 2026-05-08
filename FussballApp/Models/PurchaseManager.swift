@@ -12,7 +12,7 @@ final class PurchaseManager: ObservableObject {
     @Published private(set) var proProduct: Product?
     @Published private(set) var isLoading   = false
 
-    private var updatesTask: Task<Void, Never>?
+    nonisolated(unsafe) private var updatesTask: Task<Void, Never>?
 
     init() {
         updatesTask = Task { [weak self] in
