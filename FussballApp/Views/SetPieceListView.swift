@@ -42,13 +42,8 @@ struct SetPieceListView: View {
                                             Image(systemName: type.symbol)
                                                 .foregroundStyle(.green)
                                                 .frame(width: 24)
-                                            VStack(alignment: .leading, spacing: 2) {
-                                                Text(piece.name.isEmpty ? "Unbenannt" : piece.name)
-                                                    .foregroundStyle(.primary)
-                                                Text(piece.phase.rawValue)
-                                                    .font(.caption)
-                                                    .foregroundStyle(.secondary)
-                                            }
+                                            Text(piece.name.isEmpty ? "Unbenannt" : piece.name)
+                                                .foregroundStyle(.primary)
                                             Spacer()
                                             Image(systemName: "chevron.right")
                                                 .font(.caption)
@@ -83,7 +78,7 @@ struct SetPieceListView: View {
             .confirmationDialog("Art des Standards", isPresented: $showTypePicker, titleVisibility: .visible) {
                 ForEach(SetPieceType.allCases, id: \.self) { type in
                     Button(type.rawValue) {
-                        editingPiece = SetPiece(type: type, phase: .attacking)
+                        editingPiece = SetPiece(type: type)
                     }
                 }
                 Button("Abbrechen", role: .cancel) {}

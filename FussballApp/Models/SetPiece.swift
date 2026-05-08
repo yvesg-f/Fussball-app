@@ -33,11 +33,6 @@ enum SetPieceType: String, Codable, CaseIterable {
     var usesFullPitch: Bool { self == .freeTactic }
 }
 
-enum SetPiecePhase: String, Codable, CaseIterable {
-    case attacking = "Angriff"
-    case defending = "Verteidigung"
-}
-
 enum ArrowColor: String, Codable, CaseIterable {
     case blue   = "Lauf"
     case orange = "Flanke"
@@ -54,16 +49,14 @@ struct SetPiece: Codable, Identifiable {
     var id: UUID = UUID()
     var name: String
     var type: SetPieceType
-    var phase: SetPiecePhase
     var playerPositions: [String: [Double]]
     var ballPosition: [Double]
     var arrows: [DrawnArrow]
     var opponentPositions: [[Double]]
 
-    init(name: String = "", type: SetPieceType, phase: SetPiecePhase = .attacking) {
+    init(name: String = "", type: SetPieceType) {
         self.name = name
         self.type = type
-        self.phase = phase
         self.playerPositions = [:]
         self.ballPosition = type.defaultBallPosition
         self.arrows = []
@@ -71,7 +64,7 @@ struct SetPiece: Codable, Identifiable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case id, name, type, phase, playerPositions, ballPosition, arrows, opponentPositions
+        case id, name, type, playerPositions, ballPosition, arrows, opponentPositions
     }
 
     init(from decoder: Decoder) throws {
@@ -79,7 +72,6 @@ struct SetPiece: Codable, Identifiable {
         id                = try c.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
         name              = try c.decode(String.self, forKey: .name)
         type              = try c.decode(SetPieceType.self, forKey: .type)
-        phase             = try c.decodeIfPresent(SetPiecePhase.self, forKey: .phase) ?? .attacking
         playerPositions   = try c.decodeIfPresent([String: [Double]].self, forKey: .playerPositions) ?? [:]
         ballPosition      = try c.decodeIfPresent([Double].self, forKey: .ballPosition) ?? type.defaultBallPosition
         arrows            = try c.decodeIfPresent([DrawnArrow].self, forKey: .arrows) ?? []
