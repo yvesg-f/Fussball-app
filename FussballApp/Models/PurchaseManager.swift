@@ -37,22 +37,27 @@ final class PurchaseManager: ObservableObject {
         await refreshStatus()
     }
 
-    func purchase() async throws {
-        guard let product = proProduct else { return }
+    enum PurchaseOutcome { case success, pending, cancelled }
+
+    func purchase() async throws -> PurchaseOutcome {
+        guard let product = proProduct else { return .cancelled }
         let result = try await product.purchase()
         switch result {
         case .success(let verification):
             let tx = try verification.payloadValue
             await tx.finish()
             await refreshStatus()
-        case .pending, .userCancelled: break
-        @unknown default: break
+            return .success
+        case .pending:  return .pending
+        case .userCancelled: return .cancelled
+        @unknown default: return .cancelled
         }
     }
 
     func restore() async {
         isLoading = true
         defer { isLoading = false }
+        try? await AppStore.sync()
         await refreshStatus()
     }
 

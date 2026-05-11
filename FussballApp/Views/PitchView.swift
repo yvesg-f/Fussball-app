@@ -3,7 +3,6 @@ import SwiftUI
 struct PitchView: View {
     @ObservedObject var store: LineupStore
     @Binding var selectedSlot: Int?
-    var activeZones: Set<PitchZone> = []
 
     @State private var pickerSlot: Int? = nil
     @State private var draggingSlot: Int? = nil
@@ -15,23 +14,6 @@ struct PitchView: View {
                 .fill(Color(red: 0.17, green: 0.54, blue: 0.20))
                 .overlay(PitchLines().clipShape(RoundedRectangle(cornerRadius: 14)))
                 .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(.white.opacity(0.25), lineWidth: 1))
-
-            // Zone overlays
-            if !activeZones.isEmpty {
-                GeometryReader { geo in
-                    ForEach(Array(activeZones), id: \.self) { zone in
-                        Rectangle()
-                            .fill(zone.color.opacity(0.18))
-                            .frame(width: geo.size.width * (zone.xEnd - zone.xStart),
-                                   height: geo.size.height)
-                            .position(
-                                x: geo.size.width * (zone.xStart + zone.xEnd) / 2,
-                                y: geo.size.height / 2
-                            )
-                    }
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-            }
 
             GeometryReader { geo in
                 let pw = geo.size.width

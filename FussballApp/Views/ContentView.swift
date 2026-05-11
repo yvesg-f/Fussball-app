@@ -5,7 +5,6 @@ struct ContentView: View {
     @EnvironmentObject private var settings: AppSettings
     private let lineupName: String
     @State private var selectedSlot: Int? = nil
-    @State private var activeZones: Set<PitchZone> = []
     @State private var showNotes = false
     @State private var showSetPieces = false
     @State private var pendingFormation: Formation? = nil
@@ -48,9 +47,7 @@ struct ContentView: View {
                 }
                 .padding(.horizontal)
 
-                PitchView(store: store, selectedSlot: $selectedSlot, activeZones: activeZones)
-
-                ZoneToggleBar(activeZones: $activeZones)
+                PitchView(store: store, selectedSlot: $selectedSlot)
 
                 BenchView(store: store, selectedSlot: $selectedSlot)
             }
@@ -87,40 +84,6 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showSetPieces) {
             SetPieceListView(store: store)
-        }
-    }
-}
-
-// MARK: - Zone toggle bar
-
-private struct ZoneToggleBar: View {
-    @Binding var activeZones: Set<PitchZone>
-
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(PitchZone.allCases, id: \.self) { zone in
-                    let isOn = activeZones.contains(zone)
-                    Button {
-                        if isOn { activeZones.remove(zone) }
-                        else     { activeZones.insert(zone) }
-                    } label: {
-                        Text(zone.label)
-                            .font(.system(size: 12, weight: .medium))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(
-                                isOn ? zone.color.opacity(0.25) : Color(.secondarySystemBackground),
-                                in: Capsule()
-                            )
-                            .foregroundStyle(isOn ? zone.color : .secondary)
-                            .overlay(Capsule().strokeBorder(isOn ? zone.color.opacity(0.6) : .clear, lineWidth: 1))
-                    }
-                    .buttonStyle(.plain)
-                    .animation(.easeInOut(duration: 0.15), value: isOn)
-                }
-            }
-            .padding(.horizontal)
         }
     }
 }

@@ -8,11 +8,18 @@ struct FussballAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            HomeView(appStore: appStore)
-                .environmentObject(purchaseManager)
-                .environmentObject(appSettings)
-                .preferredColorScheme(appSettings.colorScheme.swiftUIScheme)
-                .task { await purchaseManager.load() }
+            Group {
+                if appStore.team != nil {
+                    HomeView(appStore: appStore)
+                } else {
+                    OnboardingView(appStore: appStore)
+                }
+            }
+            .environmentObject(purchaseManager)
+            .environmentObject(appSettings)
+            .preferredColorScheme(appSettings.colorScheme.swiftUIScheme)
+            .animation(.easeInOut(duration: 0.35), value: appStore.team != nil)
+            .task { await purchaseManager.load() }
         }
     }
 }

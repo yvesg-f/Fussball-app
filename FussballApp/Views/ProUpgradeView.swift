@@ -8,6 +8,7 @@ struct ProUpgradeView: View {
     @State private var isPurchasing = false
     @State private var isRestoring  = false
     @State private var errorMessage: String?
+    @State private var showPendingAlert = false
 
     var body: some View {
         NavigationStack {
@@ -112,6 +113,11 @@ struct ProUpgradeView: View {
             } message: {
                 Text(errorMessage ?? "")
             }
+            .alert(settings.t("purchase_pending_title"), isPresented: $showPendingAlert) {
+                Button(settings.t("ok"), role: .cancel) {}
+            } message: {
+                Text(settings.t("purchase_pending_message"))
+            }
         }
     }
 
@@ -119,8 +125,12 @@ struct ProUpgradeView: View {
         isPurchasing = true
         defer { isPurchasing = false }
         do {
-            try await pm.purchase()
-            if pm.isPro { dismiss() }
+            let outcome = try await pm.purchase()
+            switch outcome {
+            case .success:   dismiss()
+            case .pending:   showPendingAlert = true
+            case .cancelled: break
+            }
         } catch {
             errorMessage = error.localizedDescription
         }
