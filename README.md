@@ -5,7 +5,7 @@ Native iOS-App zur Verwaltung von Fussball-Aufstellungen für ein Team. Gebaut m
 ## Was die App kann
 
 **Team & Spieler**
-- Ein Team mit bis zu 25 Spielern definieren
+- Ein Team mit bis zu 35 Spielern definieren
 - Spielernamen jederzeit bearbeiten oder löschen (doppelte Namen werden verhindert)
 - Spieler bleiben über alle Aufstellungen gleich
 
@@ -23,9 +23,6 @@ Native iOS-App zur Verwaltung von Fussball-Aufstellungen für ein Team. Gebaut m
 - Spieler antippen → auswechseln, Kapitän setzen oder von der Bank tauschen
 - Torwart-Chip in Gelb, Feldspieler in Weiss
 - Kapitän-Markierung (Krone)
-
-**Feldzonen**
-- 5 Feldzonen einblendbar: Links · Halbspur L · Zentrum · Halbspur R · Rechts
 
 **Bank**
 - Spieler haben 3 Status: Startelf · Bank · Nicht dabei
@@ -154,7 +151,6 @@ FussballApp/
     ContentView.swift               ← Aufstellungs-View mit Formation & Bank
     PitchView.swift                 ← Spielfeld mit Drag & Drop
     PitchLines.swift                ← Feldlinien ganzes Spielfeld (Canvas)
-    PitchZone.swift                 ← Feldzonen-Definitionen
     HalfPitchLines.swift            ← Halbfeld-Linien für Standards
     PlayerChip.swift                ← Spieler-Chip
     BenchView.swift                 ← Bank (Bank / Nicht dabei) mit Tausch-Panel

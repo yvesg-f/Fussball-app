@@ -40,7 +40,7 @@ struct TeamSetupView: View {
                     }
                     .onDelete { players.remove(atOffsets: $0) }
 
-                    if players.count < 25 {
+                    if players.count < 35 {
                         HStack {
                             TextField(settings.t("add_name_placeholder"), text: $newPlayer)
                                 .focused($newPlayerFocused)
@@ -87,7 +87,7 @@ struct TeamSetupView: View {
 
     private func addPlayer() {
         let name = newPlayer.trimmingCharacters(in: .whitespaces)
-        guard !name.isEmpty, players.count < 25 else { return }
+        guard !name.isEmpty, players.count < 35 else { return }
         let isDuplicate = players.contains {
             $0.name.trimmingCharacters(in: .whitespaces).lowercased() == name.lowercased()
         }
