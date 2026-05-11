@@ -1,14 +1,18 @@
 import SwiftUI
+import UIKit
 
 struct ContentView: View {
     @StateObject private var store: LineupStore
     @EnvironmentObject private var settings: AppSettings
+    @Environment(\.displayScale) private var displayScale
     private let lineupName: String
     @State private var selectedSlot: Int? = nil
     @State private var showNotes = false
     @State private var showSetPieces = false
     @State private var pendingFormation: Formation? = nil
     @State private var showFormationAlert = false
+    @State private var shareImage: UIImage? = nil
+    @State private var showShareSheet = false
 
     private var formationBinding: Binding<Formation> {
         Binding(
@@ -67,6 +71,20 @@ struct ContentView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    let v = ShareableLineupView(store: store, lineupName: lineupName)
+                    let r = ImageRenderer(content: v)
+                    r.scale = displayScale
+                    r.proposedSize = ProposedViewSize(width: 358, height: nil)
+                    if let img = r.uiImage {
+                        shareImage = img
+                        showShareSheet = true
+                    }
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
                     Button { showSetPieces = true } label: {
                         Label(settings.t("set_pieces"), systemImage: "figure.soccer")
@@ -84,6 +102,12 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showSetPieces) {
             SetPieceListView(store: store)
+        }
+        .sheet(isPresented: $showShareSheet) {
+            if let img = shareImage {
+                ActivityViewController(activityItems: [img])
+                    .ignoresSafeArea()
+            }
         }
     }
 }

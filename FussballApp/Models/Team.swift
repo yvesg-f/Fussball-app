@@ -38,8 +38,8 @@ struct Team: Codable, Identifiable {
     var setPieces: [SetPiece]
 
     var activeLineup: SavedLineup {
-        get { lineups[activeLineupIndex] }
-        set { lineups[activeLineupIndex] = newValue }
+        get { lineups.indices.contains(activeLineupIndex) ? lineups[activeLineupIndex] : SavedLineup(name: "Plan A") }
+        set { if lineups.indices.contains(activeLineupIndex) { lineups[activeLineupIndex] = newValue } }
     }
 
     // Used by HomeView subtitle without changes
@@ -51,7 +51,7 @@ struct Team: Codable, Identifiable {
         self.playerNames = playerNames
         self.captainName = nil
         self.tacticNotes = ""
-        self.lineups = [SavedLineup(name: "Plan A"), SavedLineup(name: "Plan B")]
+        self.lineups = []
         self.activeLineupIndex = 0
         self.setPieces = []
     }

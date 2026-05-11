@@ -31,6 +31,7 @@
 		CC000000000000000000000024 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000024 /* AppSettings.swift */; };
 		CC000000000000000000000025 /* Translations.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000025 /* Translations.swift */; };
 		CC000000000000000000000026 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000026 /* SettingsView.swift */; };
+		CC000000000000000000000027 /* ExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000027 /* ExportView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +60,7 @@
 		BB000000000000000000000024 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		BB000000000000000000000025 /* Translations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Translations.swift; sourceTree = "<group>"; };
 		BB000000000000000000000026 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		BB000000000000000000000027 /* ExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -129,6 +131,7 @@
 				BB000000000000000000000021 /* SetPieceEditorView.swift */,
 				BB000000000000000000000023 /* ProUpgradeView.swift */,
 				BB000000000000000000000026 /* SettingsView.swift */,
+				BB000000000000000000000027 /* ExportView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -214,6 +217,7 @@
 				CC000000000000000000000024 /* AppSettings.swift in Sources */,
 				CC000000000000000000000025 /* Translations.swift in Sources */,
 				CC000000000000000000000026 /* SettingsView.swift in Sources */,
+				CC000000000000000000000027 /* ExportView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,5 +428,6 @@
 	};
 	rootObject = AA000000000000000000000000 /* Project object */;
 }
+
 
 

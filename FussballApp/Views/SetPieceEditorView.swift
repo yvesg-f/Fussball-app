@@ -1,6 +1,7 @@
 import SwiftUI
+import UIKit
 
-private extension ArrowColor {
+extension ArrowColor {
     var color: Color {
         switch self {
         case .blue:   return .cyan
@@ -14,6 +15,7 @@ struct SetPieceEditorView: View {
     @ObservedObject var store: LineupStore
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.displayScale) private var displayScale
 
     @State private var piece: SetPiece
     @State private var isDrawMode = false
@@ -21,6 +23,8 @@ struct SetPieceEditorView: View {
     @State private var pendingPlayer: String? = nil
     @State private var pendingOpponent = false
     @State private var currentArrowPoints: [[Double]] = []
+    @State private var shareImage: UIImage? = nil
+    @State private var showShareSheet = false
 
     init(store: LineupStore, piece: SetPiece) {
         self.store = store
@@ -121,6 +125,20 @@ struct SetPieceEditorView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(settings.t("cancel")) { dismiss() }
                 }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        let v = SetPieceShareView(piece: piece)
+                        let r = ImageRenderer(content: v)
+                        r.scale = displayScale
+                        r.proposedSize = ProposedViewSize(width: 358, height: nil)
+                        if let img = r.uiImage {
+                            shareImage = img
+                            showShareSheet = true
+                        }
+                    } label: {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(settings.t("save")) {
                         store.saveSetPiece(piece)
@@ -129,6 +147,12 @@ struct SetPieceEditorView: View {
                     .disabled(piece.name.trimmingCharacters(in: .whitespaces).isEmpty)
                     .fontWeight(.semibold)
                 }
+            }
+        }
+        .sheet(isPresented: $showShareSheet) {
+            if let img = shareImage {
+                ActivityViewController(activityItems: [img])
+                    .ignoresSafeArea()
             }
         }
     }
@@ -373,7 +397,7 @@ private struct PlayerStripChip: View {
 
 // MARK: - Shapes
 
-private struct ArrowShape: Shape {
+struct ArrowShape: Shape {
     let points: [[Double]]
     let size: CGSize
 
@@ -388,7 +412,7 @@ private struct ArrowShape: Shape {
     }
 }
 
-private struct ArrowHead: Shape {
+struct ArrowHead: Shape {
     let points: [[Double]]
     let size: CGSize
 
@@ -414,7 +438,7 @@ private struct ArrowHead: Shape {
     }
 }
 
-private struct BallMarker: View {
+struct BallMarker: View {
     var body: some View {
         ZStack {
             Circle()
@@ -428,7 +452,7 @@ private struct BallMarker: View {
     }
 }
 
-private struct MiniChip: View {
+struct MiniChip: View {
     let name: String
     var body: some View {
         Text(name)
@@ -443,7 +467,7 @@ private struct MiniChip: View {
     }
 }
 
-private struct OpponentMarker: View {
+struct OpponentMarker: View {
     var body: some View {
         ZStack {
             Circle()
