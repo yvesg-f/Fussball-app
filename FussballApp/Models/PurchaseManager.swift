@@ -57,7 +57,7 @@ final class PurchaseManager: ObservableObject {
     func restore() async {
         isLoading = true
         defer { isLoading = false }
-        try? await AppStore.sync()
+        try? await StoreKit.AppStore.sync()
         await refreshStatus()
     }
 
