@@ -32,6 +32,7 @@
 		CC000000000000000000000025 /* Translations.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000025 /* Translations.swift */; };
 		CC000000000000000000000026 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000026 /* SettingsView.swift */; };
 		CC000000000000000000000027 /* ExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000027 /* ExportView.swift */; };
+		CC000000000000000000000028 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000028 /* OnboardingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +62,7 @@
 		BB000000000000000000000025 /* Translations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Translations.swift; sourceTree = "<group>"; };
 		BB000000000000000000000026 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		BB000000000000000000000027 /* ExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportView.swift; sourceTree = "<group>"; };
+		BB000000000000000000000028 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -132,6 +134,7 @@
 				BB000000000000000000000023 /* ProUpgradeView.swift */,
 				BB000000000000000000000026 /* SettingsView.swift */,
 				BB000000000000000000000027 /* ExportView.swift */,
+				BB000000000000000000000028 /* OnboardingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -218,6 +221,7 @@
 				CC000000000000000000000025 /* Translations.swift in Sources */,
 				CC000000000000000000000026 /* SettingsView.swift in Sources */,
 				CC000000000000000000000027 /* ExportView.swift in Sources */,
+				CC000000000000000000000028 /* OnboardingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
