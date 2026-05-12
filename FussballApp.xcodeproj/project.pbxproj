@@ -22,7 +22,6 @@
 		CC000000000000000000000015 /* TeamSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000015 /* TeamSetupView.swift */; };
 		CC000000000000000000000016 /* SetPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000016 /* SetPiece.swift */; };
 		CC000000000000000000000017 /* HalfPitchLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000017 /* HalfPitchLines.swift */; };
-		CC000000000000000000000018 /* PitchZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000018 /* PitchZone.swift */; };
 		CC000000000000000000000019 /* TacticNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000019 /* TacticNotesView.swift */; };
 		CC000000000000000000000020 /* SetPieceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000020 /* SetPieceListView.swift */; };
 		CC000000000000000000000021 /* SetPieceEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000021 /* SetPieceEditorView.swift */; };
@@ -52,7 +51,6 @@
 		BB000000000000000000000015 /* TeamSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamSetupView.swift; sourceTree = "<group>"; };
 		BB000000000000000000000016 /* SetPiece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPiece.swift; sourceTree = "<group>"; };
 		BB000000000000000000000017 /* HalfPitchLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfPitchLines.swift; sourceTree = "<group>"; };
-		BB000000000000000000000018 /* PitchZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchZone.swift; sourceTree = "<group>"; };
 		BB000000000000000000000019 /* TacticNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TacticNotesView.swift; sourceTree = "<group>"; };
 		BB000000000000000000000020 /* SetPieceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPieceListView.swift; sourceTree = "<group>"; };
 		BB000000000000000000000021 /* SetPieceEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPieceEditorView.swift; sourceTree = "<group>"; };
@@ -127,7 +125,6 @@
 				BB000000000000000000000007 /* PlayerChip.swift */,
 				BB000000000000000000000009 /* BenchView.swift */,
 				BB000000000000000000000017 /* HalfPitchLines.swift */,
-				BB000000000000000000000018 /* PitchZone.swift */,
 				BB000000000000000000000019 /* TacticNotesView.swift */,
 				BB000000000000000000000020 /* SetPieceListView.swift */,
 				BB000000000000000000000021 /* SetPieceEditorView.swift */,
@@ -211,7 +208,6 @@
 				CC000000000000000000000015 /* TeamSetupView.swift in Sources */,
 				CC000000000000000000000016 /* SetPiece.swift in Sources */,
 				CC000000000000000000000017 /* HalfPitchLines.swift in Sources */,
-				CC000000000000000000000018 /* PitchZone.swift in Sources */,
 				CC000000000000000000000019 /* TacticNotesView.swift in Sources */,
 				CC000000000000000000000020 /* SetPieceListView.swift in Sources */,
 				CC000000000000000000000021 /* SetPieceEditorView.swift in Sources */,
